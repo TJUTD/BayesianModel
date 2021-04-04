@@ -1,0 +1,172 @@
+---
+title: Metropolis-Hastings
+output: html_document
+---
+
+```{R setup, include = FALSE}
+knitr::opts_chunk$set(comment = NA, prompt = TRUE)
+```
+
+Metropolis algorithm
+
+* a symmetric proposal distribution. uniform($\theta^{(s)}-\delta,\theta^{(s)}+\delta$), normal($\theta^{(s)},\delta^2$)
+
+1. sample $\theta^* \sim J(\theta|\theta^{(s)})$
+
+2. compute acceptance ratio $$r=\frac{p(\theta^*|y)}{p(\theta^{(s)}|y)}=\frac{p(y|\theta^*)p(\theta^*)}{p(y|\theta^{(s)})p(\theta^{(s)})}$$
+
+3. let $$\theta^{(s+1)}=\begin{cases} \theta^* & \mbox{with probability }\min(r,1)\\
+\theta^{(s)}& \mbox{with probability }1-\min(r,1)\end{cases}$$
+
+\
+
+\
+
+example
+$$\begin{aligned}
+y_1,\dots,y_n |\theta &\overset{i.i.d.}{\sim} \mathrm{normal}(\theta,\sigma^2)\\
+\theta &\sim \mathrm{normal}(\mu,\tau^2)\\
+\theta|\sigma^2,y_1,\dots,y_n &\sim  \mathrm{normal}(\mu_n,\tau_n^2)
+\end{aligned}$$
+
+$\mu_n=\frac{\mu_0/\tau_0^2 + {n}\bar{y}/{\sigma^2}}{{1}/{\tau_0^2} + {n}/{\sigma^2}}$ and $\tau_n^2 = \frac{1}{{1}/{\tau_0^2} + {n}/{\sigma^2}}$ 
+
+normal proposal $\theta^* \sim  \mathrm{normal}(\theta^{(s)},\delta^2)$
+
+$$\log r = \sum [\mbox{log dnorm}(y,\theta^*,\sigma) - \mbox{log dnorm}(y,\theta^{(s)},\sigma)]
++ \mbox{log dnorm}(\theta^*,\mu,\tau) - \mbox{log dnorm}(\theta^{(s)},\mu,\tau)$$
+
+
+```{r metropolis}
+# Fig 10.3 Results from the Metropolis algorithm for the normal model
+# http://www2.stat.duke.edu/~pdh10/FCBS/Replication/chapter10.R
+
+s2 <- 1 
+t2 <- 10 ; mu <- 5
+
+set.seed(1)
+n <- 5
+# y <- round(rnorm(n,10,1),2)
+y <- c(9.37, 10.18, 9.16, 11.60, 10.33)
+
+mu_n <- ( mean(y)*n/s2 + mu/t2 ) / ( n/s2 + 1/t2 ) 
+t2_n <- 1 / (n/s2+1/t2)
+
+delta <-2 ; nsamp <- 10000 
+
+# initialization 
+theta <- 0 ;  vtehta <- numeric(nsamp)
+
+for(s in 1:nsamp) {
+
+  theta_star <- rnorm(1, theta, sqrt(delta))
+
+  log.r <- ( sum( dnorm(y, theta_star, sqrt(s2), log = TRUE) ) + 
+               dnorm(theta_star, mu, sqrt(t2), log = TRUE) )  -
+            ( sum( dnorm(y, theta, sqrt(s2), log = TRUE) ) +
+                dnorm(theta, mu, sqrt(t2), log = TRUE) ) 
+
+  if (log(runif(1)) < log.r) { theta <- theta_star }
+
+  vtehta[s] <- theta
+
+}
+
+par(mfrow = c(2,2), mar = c(3,3,1,1), mgp = c(1.75,.75,0))
+
+by10 <- seq(10, nsamp, by = 10)
+plot( by10, vtehta[by10], type = "l", xlab = "iteration", ylab = expression(theta) )
+
+hist( vtehta[-(1:50)], prob = TRUE, main = "", xlab = expression(theta), ylab = "density" )
+th <- seq(min(vtehta), max(vtehta), length = 100)
+lines( th, dnorm(th, mu_n, sqrt(t2_n)) )
+
+acf(vtehta, lag.max = 50)
+thin<-c(1,(1:1000)*(nsamp/1000))
+acf(vtehta[thin], lag.max = 50, xlab="Lag/10")
+
+library(coda)
+effectiveSize(vtehta)
+```
+
+show convergence
+
+* small step $\rightarrow$ high correlation
+
+* large step $\rightarrow$ high rejection
+
+```{r choice delta}
+par(mfrow=c(2,3))
+vacr <- vacf <- numeric(5)
+nsamp <- 10000
+
+vdelta2 <- 2^c(-5,-1,1,5,7)
+
+for( k in 1:5 ) {
+  
+  set.seed(1)
+  delta2 <- vdelta2[k]
+  vtheta <- numeric(nsamp)
+  theta <- 0
+  cnt_ac <- 0
+
+  for(s in 1:nsamp) {
+  
+    theta_star <- rnorm(1, theta, sqrt(delta2))
+    log.r <- sum( dnorm(y, theta_star, sqrt(s2), log = TRUE) -
+                  dnorm(y, theta, sqrt(s2), log = TRUE) ) + 
+              dnorm(theta_star, mu, sqrt(t2), log = TRUE) -
+                dnorm(theta, mu, sqrt(t2), log = TRUE) 
+  
+    if ( log(runif(1)) < log.r )  { theta <- theta_star ; cnt_ac <- cnt_ac + 1 }
+    vtehta[s] <- theta
+  
+  }
+  
+  plot( vtehta[1:1000], type = "l", xlab = "iteration", ylab = expression(theta), 
+        ylim = range(vtehta), main = delta2 ) 
+  abline(h = mu_n, lty = 2)
+
+  vacr[k] <- cnt_ac/nsamp
+  vacf[k] <- acf(vtehta, plot=FALSE)$acf[2]
+}
+
+# acceptance ratio vs acf
+plot(vacr, vacf, xlab ="acceptance ratio", ylab = "acf") 
+lines(vacr, vacf)
+
+for (k in 1:5) {
+  text(vacr[k], vacf[k], vdelta2[k])
+}
+
+
+```
+
+Metropolis-Hastings algorithm
+
+1. update $U$:
+
+- (a) sample $u \sim J_u(u|u^{(s)}, v^{(s)})$
+  
+- (b) compute the acceptance ratio
+    $$r = \frac{p_0(u^*,v^{(s)})}{p_0(u^{(s)},v^{(s)})}\frac{J_u(u^{(s)}|u^*,v^{(s)})}{J_u(u^*{(s)}|u^{(s)},v^{(s)})}$$
+    
+- (c) set $$u^{(s+1)} = \begin{cases}  u^* & \mbox{ with probability } \min(1,r)\\
+                                          u^{(s)} & \mbox{ with probability } 1-\min(1,r)\end{cases}$$
+
+2. update $V$ :
+
+- (a) sample $v \sim J_v(v|u^{(s+1)}, v^{(s)})$
+  
+- (b) compute the acceptance ratio
+    $$r = \frac{p_0(u^{(s+1)},v^*)}{p_0(u^{(s+1)},v^{(s)})}\frac{J_v(v^{(s)}|u^{(s+1)},v^*)}{J_v(v^*|u^{(s+1)},v^{(s)})}$$
+    
+- (c) set $$v^{(s+1)} = \begin{cases}  v^* & \mbox{ with probability } \min(1,r)\\
+                                          v^{(s)} & \mbox{ with probability } 1-\min(1,r)\end{cases}$$
+
+* independent Metropolis-Hastings - independent proposal $J_u(u^{(s+1)}|u^{(s)},v^{(s)}) = J_u(u^{(s+1)})$
+
+* random-walk Metropolis - Metropolis algorithm - symetric proposal distribution  $J_u(u|u',v) = J_u(u'|u,v)$  
+
+* Gibbs sampler - full condition distribution proposal  $J_u(u'|u,v) = p_0(u'|v)$   
+

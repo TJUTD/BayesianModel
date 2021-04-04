@@ -326,7 +326,10 @@ plot(thetaMCMC[,1], xlab = "iteration", ylab = expression(theta))
 
 
 #### Autocorrelation and effective sample size
+par(mfrow = c(1,2), mar = c(3,3,1,1), mgp = c(1.75,.75,0))
 acf(thetaMCMC[,1], lag.max = 50)
+thin<-c(1,(1:1000)*(nsamp/1000))
+acf(thetaMCMC[thin,1], lag.max = 50, xlab="Lag/10")
 effectiveSize(thetaMCMC[,1])
 ```
 
