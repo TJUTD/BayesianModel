@@ -7,7 +7,7 @@ output: html_document
 knitr::opts_chunk$set(comment = NA, prompt = TRUE)
 ```
 
-Metropolis algorithm
+#Metropolis algorithm
 
 * a symmetric proposal distribution. uniform($\theta^{(s)}-\delta,\theta^{(s)}+\delta$), normal($\theta^{(s)},\delta^2$)
 
@@ -142,7 +142,7 @@ for (k in 1:5) {
 
 ```
 
-Metropolis-Hastings algorithm
+#Metropolis-Hastings algorithm
 
 1. update $U$:
 
@@ -170,3 +170,386 @@ Metropolis-Hastings algorithm
 
 * Gibbs sampler - full condition distribution proposal  $J_u(u'|u,v) = p_0(u'|v)$   
 
+\
+
+\
+
+$$\begin{aligned}
+X &\sim \mathrm{norm}(\mu,\sigma^2)\\
+\mu &\sim \mathrm{beta}(2,2)\\
+\sigma^2 &\sim \mathrm{lognormal}(1,10)
+\end{aligned}$$
+
+```{r } 
+x <- c(2.366,2.495,1.084,0.759,0.878,1.276,1.460,0.180,-1.01,1.487,-0.119,0.258)
+```
+
+
+## independent MH with prior proposal $p(\theta^*) = J_{\theta}(\theta^*)$
+
+$$r=\frac{p(y|\theta^*)}{p(y|\theta^{(s)})}$$
+
+```{r }
+nsamp <- 100000
+nburn <- 50000
+
+vmu <- numeric(nsamp)
+vsig2 <- numeric(nsamp)
+
+set.seed(1)
+
+
+mu <- rbeta(1, 2, 2)
+sig2 <- rlnorm(1, sqrt(10))
+
+naccept <- 0
+
+loglikelihood <- function (mu, sig2, x) {
+  return(sum(dnorm(x, mu, sqrt(sig2), log=T)) )
+}
+
+
+for (s in 1:nsamp) {
+  mu_new <- rbeta(1, 2, 2)
+  sig2_new <- rlnorm(1, sqrt(10))
+  
+  logr <- loglikelihood(mu_new, sig2_new, x) - loglikelihood(mu, sig2, x) 
+  
+  u <- runif(1)
+  if (logr >= log(u)) {
+    mu <- mu_new
+    sig2 <- sig2_new
+    naccept <- naccept + 1
+  }
+  
+  vmu[s] <- mu
+  vsig2[s] <- sig2
+}
+
+effectiveSize(vmu)
+effectiveSize(vsig2)
+
+naccept/nsamp
+
+median(vmu)
+median(vmu[(nburn+1):nsamp])
+
+par(mfrow = c(1,3))
+hist(vmu[(nburn+1):nsamp], xlab = expression(mu),  main = "", freq = F)
+acf(vmu, lag.max = 50,  main = "")
+thin<-c(1,(1:1000)*((nsamp-nburn)/1000))
+acf(vmu[(nburn+1):nsamp][thin], lag.max = 50, xlab="Lag/10",  main = "")
+
+```
+
+
+## independent MH with general proposal
+$$r=\frac{p(y|\theta^*)p(\theta^*)}{p(y|\theta^{(s)})p(\theta^{(s)})} \frac{J_{\theta}(\theta^{(s)})}{J_{\theta}(\theta^*)}$$
+```{r }
+nsamp <- 100000
+nburn <- 50000
+
+vmu <- numeric(nsamp)
+vsig2 <- numeric(nsamp)
+
+set.seed(1)
+
+mu <- rbeta(1, 2, 2)
+sig2 <- rlnorm(1, sqrt(10))
+
+naccept <- 0
+
+logpost <- function (mu, sig2, x) {
+  return( sum(dnorm(x, mu, sqrt(sig2), log=T)) + dbeta(mu, 2, 2, log=T) + 
+            dlnorm(sig2, 1, sqrt(10), log=T) )
+}
+
+
+for (s in 1:nsamp) {
+  mu_new <- runif(1)
+  sig2_new <- rchisq(1, 1)
+  
+  logr <- logpost(mu_new, sig2_new, x) - logpost(mu, sig2, x) + 
+    dchisq(sig2,1, log=T) - dchisq(sig2_new,1, log=T) 
+  
+  u <- runif(1)
+  if (logr >= log(u)) {
+    mu <- mu_new
+    sig2 <- sig2_new
+    naccept <- naccept + 1
+  }
+  
+  vmu[s] <- mu
+  vsig2[s] <- sig2
+}
+
+effectiveSize(vmu)
+effectiveSize(vsig2)
+
+naccept/nsamp
+
+median(vmu)
+median(vmu[(nburn+1):nsamp])
+
+par(mfrow = c(1,3))
+hist(vmu[(nburn+1):nsamp], xlab = expression(mu),  main = "", freq = F)
+acf(vmu, lag.max = 50,  main = "")
+thin<-c(1,(1:1000)*((nsamp-nburn)/1000))
+acf(vmu[(nburn+1):nsamp][thin], lag.max = 50, xlab="Lag/10",  main = "")
+
+```
+
+
+
+## if omit ratio of proposal
+```{r }
+nsamp <- 100000
+nburn <- 50000
+
+vmu <- numeric(nsamp)
+vsig2 <- numeric(nsamp)
+
+set.seed(1)
+
+mu <- rbeta(1, 2, 2)
+sig2 <- rlnorm(1, sqrt(10))
+
+naccept <- 0
+
+logpost <- function (mu, sig2, x) {
+  return( sum(dnorm(x, mu, sqrt(sig2), log=T)) + dbeta(mu, 2, 2, log=T) + 
+            dlnorm(sig2, 1, sqrt(10), log=T) )
+}
+
+
+for (s in 1:nsamp) {
+  mu_new <- runif(1)
+  sig2_new <- rchisq(1, 1)
+  
+  logr <- logpost(mu_new, sig2_new, x) - logpost(mu, sig2, x) 
+  
+  u <- runif(1)
+  if (logr >= log(u)) {
+    mu <- mu_new
+    sig2 <- sig2_new
+    naccept <- naccept + 1
+  }
+  
+  vmu[s] <- mu
+  vsig2[s] <- sig2
+}
+
+effectiveSize(vmu)
+effectiveSize(vsig2)
+
+naccept/nsamp
+
+median(vmu)
+median(vmu[(nburn+1):nsamp])
+
+par(mfrow = c(1,3))
+hist(vmu[(nburn+1):nsamp], xlab = expression(mu),  main = "", freq = F)
+acf(vmu, lag.max = 50,  main = "")
+thin<-c(1,(1:1000)*((nsamp-nburn)/1000))
+acf(vmu[(nburn+1):nsamp][thin], lag.max = 50, xlab="Lag/10",  main = "")
+
+```
+
+
+
+
+# random walk MH $J_{\theta}(\theta^*|\theta^{(s)}) = J_{\theta}(\theta^{(s)}|\theta^*)$
+$$r=\frac{p(\theta^*|y)}{p(\theta^{(s)}|y)}=\frac{p(y|\theta^*)p(\theta^*)}{p(y|\theta^{(s)})p(\theta^{(s)})}$$
+```{r }
+nsamp <- 100000
+nburn <- 50000
+
+vmu <- numeric(nsamp)
+vlogsig2 <- numeric(nsamp)
+
+set.seed(1)
+
+mu <- rbeta(1, 2, 2)
+logsig2 <- rnorm(1, sqrt(10))
+
+delta_mu <- 0.5
+delta_logsig2 <- 5
+
+naccept <- 0
+
+logpost <- function (mu, logsig2, x) {
+  return( sum(dnorm(x, mu, sqrt(exp(logsig2)), log=T)) + dbeta(mu, 2, 2, log=T) +
+            dnorm(logsig2, 1, sqrt(10), log=T) )
+}
+
+
+for (s in 1:nsamp) {
+  repeat {
+        mu_new <- mu + runif(1,-delta_mu,delta_mu)
+        if (mu_new >= 0 & mu_new <= 1)
+          break
+  }
+  
+  logsig2_new <- rnorm(1,logsig2, delta_logsig2)
+
+  logr <- logpost(mu_new, logsig2_new, x) - logpost(mu, logsig2, x) +
+    log(min(1,mu+delta_mu)-max(0,mu-delta_mu)) -
+    log(min(1,mu_new+delta_mu)-max(0,mu_new-delta_mu))
+
+  u <- runif(1)
+  if (logr >= log(u)) {
+    mu <- mu_new
+    logsig2 <- logsig2_new
+    naccept <- naccept + 1
+  }
+
+  vmu[s] <- mu
+  vlogsig2[s] <- logsig2
+}
+
+effectiveSize(vmu)
+effectiveSize(exp(vlogsig2))
+
+
+naccept/nsamp
+
+median(vmu)
+median(vmu[(nburn+1):nsamp])
+
+par(mfrow = c(1,3))
+hist(vmu[(nburn+1):nsamp], xlab = expression(mu),  main = "", freq = F)
+acf(vmu, lag.max = 50,  main = "")
+thin<-c(1,(1:1000)*((nsamp-nburn)/1000))
+acf(vmu[(nburn+1):nsamp][thin], lag.max = 50, xlab="Lag/10",  main = "")
+
+```
+```{r }
+nsamp <- 100000
+nburn <- 50000
+
+vmu <- numeric(nsamp)
+vsig2 <- numeric(nsamp)
+
+set.seed(1)
+
+mu <- rbeta(1, 2, 2)
+sig2 <- rlnorm(1, sqrt(10))
+
+delta_mu <- 0.5
+delta_sig2 <- 5
+
+naccept <- 0
+
+logpost <- function (mu, sig2, x) {
+  return( sum(dnorm(x, mu, sqrt(sig2), log=T)) + dbeta(mu, 2, 2, log=T) +
+            dlnorm(sig2, 1, sqrt(10), log=T) )
+}
+
+
+for (s in 1:nsamp) {
+  repeat {
+        mu_new <- rnorm(1,mu,delta_mu)
+        if (mu_new >= 0 & mu_new <= 1)
+          break
+  }
+  
+  repeat {
+        sig2_new <- rnorm(1,sig2,delta_sig2)
+        if (sig2_new > 0)
+          break
+  }
+  
+
+  logr <- logpost(mu_new, sig2_new, x) - logpost(mu, sig2, x) +
+      log(pnorm(1,mu,delta_mu)-pnorm(0,mu,delta_mu)) -
+      log(pnorm(1,mu_new,delta_mu)-pnorm(0,mu_new,delta_mu)) +
+      log(1-pnorm(0,sig2,delta_sig2)) -
+      log(1-pnorm(0,sig2_new,delta_sig2)) 
+
+  u <- runif(1)
+  if (logr >= log(u)) {
+    mu <- mu_new
+    sig2 <- sig2_new
+    naccept <- naccept + 1
+  }
+
+  vmu[s] <- mu
+  vsig2[s] <- sig2
+}
+
+effectiveSize(vmu)
+effectiveSize(vsig2)
+
+
+naccept/nsamp
+
+median(vmu)
+median(vmu[(nburn+1):nsamp])
+
+par(mfrow = c(1,3))
+hist(vmu[(nburn+1):nsamp], xlab = expression(mu),  main = "", freq = F)
+acf(vmu, lag.max = 50,  main = "")
+thin<-c(1,(1:1000)*((nsamp-nburn)/1000))
+acf(vmu[(nburn+1):nsamp][thin], lag.max = 50, xlab="Lag/10",  main = "")
+
+```
+
+
+# independent MH $\mu$ and random walk MH $\log(\sigma^2)$
+
+```{r }
+nsamp <- 100000
+nburn <- 50000
+
+vmu <- numeric(nsamp)
+vlogsig2 <- numeric(nsamp)
+
+set.seed(1)
+
+mu <- rbeta(1, 2, 2)
+logsig2 <- rnorm(1, sqrt(10))
+
+
+delta_logsig2 <- 5
+
+naccept <- 0
+
+logpost <- function (mu, logsig2, x) {
+  return( sum(dnorm(x, mu, sqrt(exp(logsig2)), log=T)) + dbeta(mu, 2, 2, log=T) + 
+            dnorm(logsig2, 1, sqrt(10), log=T) )
+}
+
+
+for (s in 1:nsamp) {
+  mu_new <- runif(1)
+  logsig2_new <- rnorm(1,logsig2, delta_logsig2)
+  
+  logr <- logpost(mu_new, logsig2_new, x) - logpost(mu, logsig2, x) 
+  
+  u <- runif(1)
+  if (logr >= log(u)) {
+    mu <- mu_new
+    logsig2 <- logsig2_new
+    naccept <- naccept + 1
+  }
+  
+  vmu[s] <- mu
+  vlogsig2[s] <- logsig2
+}
+
+effectiveSize(vmu)
+effectiveSize(exp(vlogsig2))
+
+
+naccept/nsamp
+
+median(vmu)
+median(vmu[(nburn+1):nsamp])
+
+par(mfrow = c(1,3))
+hist(vmu[(nburn+1):nsamp], xlab = expression(mu),  main = "", freq = F)
+acf(vmu, lag.max = 50,  main = "")
+thin<-c(1,(1:1000)*((nsamp-nburn)/1000))
+acf(vmu[(nburn+1):nsamp][thin], lag.max = 50, xlab="Lag/10",  main = "")
+
+```
