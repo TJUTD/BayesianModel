@@ -1,0 +1,105 @@
+---
+title: Bayesian Model
+output: html_document
+---
+
+```{R setup, include = FALSE}
+knitr::opts_chunk$set(comment = NA, prompt = TRUE)
+```
+
+# conjugate
+$$p(\theta|y) \in \mathcal{P} \mbox{ for all } p(\cdot|\theta) \in \mathcal{F} \mbox{ and } p(\cdot)\in \mathcal{P}$$
+exponential family sampling distribution $\mathcal{F}$
+$$p(y_l|\theta) = f(y_l) g(\theta) e^{\phi(\theta)^Tu(y_l)} \qquad p(y|\theta) \propto [g(\theta)]^n e^{\phi(\theta)^Tt(y)},\mbox{ where } t(y) = \sum\limits_{l=1}^n u(y_l)$$
+conjugacy 
+$$p(\theta) \propto [g(\theta)]^{\eta}  e^{\phi(\theta)^T\nu} \qquad p(\theta|y) \propto [g(\theta)]^{\eta+n}  e^{\phi(\theta)^T[\nu+t(y)]}$$
+$$\begin{aligned}
+y_l|\theta &\sim \mathrm{Binomial}(n,\theta)\\
+\theta&\sim\mathrm{Beta}(\alpha,\beta)\\
+\theta|y&\sim\mathrm{Beta}(\alpha+y,\beta+n-y)
+\end{aligned}$$
+
+$$\begin{aligned}
+y_l|\theta &\sim \mathrm{Poisson}(\theta)\\
+\theta&\sim\mathrm{Gamma}(\alpha,\beta)\\
+\theta|y&\sim\mathrm{Gamma}(\alpha+n\bar{y},\beta+n)\\
+y&\sim\mathrm{NegBin}(\alpha,\beta)\\
+\mathrm{NegBin}(y|\alpha,\beta)&=\int \mathrm{Poisson}(y|\theta)\mathrm{Gamma}(\theta|\alpha,\beta)d\theta
+\end{aligned}$$
+
+exposure $x_i$
+$$\begin{aligned}
+y_l|\theta &\sim \mathrm{Poisson}(x_l\theta)\\
+\theta&\sim\mathrm{Gamma}(\alpha,\beta)\\
+\theta|y&\sim\mathrm{Gamma}(\alpha+n\bar{y},\beta+n\bar{x})
+\end{aligned}$$
+
+$$\begin{aligned}
+y_l|\theta &\sim \mathrm{Exp}(\theta)\\
+\theta&\sim\mathrm{Gamma}(\alpha,\beta)\\
+\theta|y&\sim\mathrm{Gamma}(\alpha+1,\beta+n\bar{y})
+\end{aligned}$$
+
+# noninformative
+Jeffreys' invariance principle $p(\theta)\propto [J(\theta)]^{1/2} = [J(\phi)]^{1/2} \left|\frac{d\phi}{d\theta}\right|$
+
+pivotal quantities 
+
+- location $p(y-\theta|\theta) = f(u)$, $u=y-\theta$, $f(u)=p(y-\theta|y)\propto p(\theta)p(y-\theta|\theta)=p(\theta)f(u) \Longrightarrow p(\theta) \propto$ constant 
+
+- scale $p\left(\frac{y}{\theta}\Big|\theta\right) = g(u)$, $u=\frac{y}{\theta}$, $\frac{1}{\theta}g(u)=p\left(\frac{y}{\theta}\Big|y\right)\propto p(\theta)p\left(\frac{y}{\theta}\Big|\theta\right)=p(\theta)\frac{y}{\theta^2}g(u) \Longrightarrow p(\theta) \propto \frac{1}{\theta}$ 
+
+# asymptotics at posterior mode
+
+$$\begin{aligned}
+y|\mu,\sigma^2 &\sim \mathrm{Normal}(\mu,\sigma^2) \\
+p(\mu,\log(\sigma))&\propto \mbox{ constant}\\
+(\mu,\log(\sigma))&\overset{\cdot}{\sim}\mathrm{normal}\left(\begin{bmatrix}\bar{y}\\\log(s\sqrt{(n-1)/n})\end{bmatrix}, \begin{bmatrix}(n-1)s^2/n^2 & 0\\0& 1/(2n)\end{bmatrix} \right)
+\end{aligned}
+$$
+counterexamples
+
+- underidentified models and nonidentified parameters
+
+- number of parameters incresasing with sample size
+
+- aliasing
+
+- unbounded likelihoods
+
+- improper posterior distributions
+
+- prior distributions that excludes the point of convergence
+
+- convergence to the edge of parameter space
+
+- tails of the distribution
+
+
+# hierarchical model
+
+$$\begin{aligned}
+y_{ij}|\theta_j &\sim \mathrm{normal}(\theta_j,\sigma^2) \quad i=1,2,\dots,n_j;j=1,2,\dots,J\\
+\bar{y}_{.j}|\theta_j &\sim \mathrm{normal}(\theta_j,\sigma_j^2) \quad  \bar{y}_{.j} = \frac{1}{n_j}\sum_{i=1}^{n_j}y_{ij}, \sigma_j^2=\sigma^2/n_j, \bar{y}_{.j} = \frac{\sum_{j=1}^{J}\bar{y}_{.j}/\sigma_j^2}{\sum_{j=1}^{J}1/\sigma_j^2}\\
+p(\theta|\mu,\tau) &= \prod_{j=1}^J \mathrm{dnorm}(\theta_j|\mu,\tau^2)\\
+p(\mu,\tau) &\propto p(\tau)\\
+p(\theta,\mu,\tau|y) &\propto p(\mu,\tau)p(\theta|\mu,\tau)p(y|\theta)\\
+&\propto p(\mu,\tau)\prod_{j=1}^J \mathrm{dnorm}(\theta_j|\mu,\tau^2)\prod_{j=1}^J \mathrm{dnorm}(\bar{y}_{.j}|\theta_j,\sigma_j^2)\\
+\theta_j|\mu,\tau,y &\sim \mathrm{normal}(\hat{\theta}_j,V_j) \quad \hat{\theta}_j = \frac{\bar{y}_{.j}/\sigma_j^2+\mu/\tau^2}{1/\sigma_j^2+1/\tau^2}, V_j=\frac{1}{1/\sigma_j^2+1/\tau^2}\\
+\bar{y}_{.j}|\mu,\tau &\sim \mathrm{normal}(\mu,\sigma_j^2+\tau^2)\\
+p(\mu,\tau|y) &\propto p(\mu,\tau)\prod_{j=1}^J \mathrm{dnorm}(\bar{y}_{.j}|\mu,\sigma_j^2+\tau^2)\\
+\mu|\tau,y &\sim \mathrm{normal}(\hat{\mu}_j,V_{\mu}) \quad \hat{\mu} = \frac{\sum_{j=1}^J\bar{y}_{.j}/(\sigma_j^2+\tau^2)}{\sum_{j=1}^J1/(\sigma_j^2+\tau^2)}, V_{\mu}^{-1}=\frac{1}{\sum_{j=1}^J1/(\sigma_j^2+\tau^2)}\\
+p(\tau|y) &= \frac{p(\mu,\tau|y)}{p(\mu|\tau,y)} \\
+&\propto \frac{p(\tau)\prod_{j=1}^J \mathrm{dnorm}(\bar{y}_{.j}|\mu,\sigma_j^2+\tau^2)}{p(\mu|\mu,V_{\mu})} \\
+&\propto \frac{p(\tau)\prod_{j=1}^J \mathrm{dnorm}(\bar{y}_{.j}|\hat{\mu},\sigma_j^2+\tau^2)}{p(\hat{\mu}|\hat{\mu},V_{\mu})} \\
+&\propto p(\tau)V_{\mu}^{1/2}\prod_{j=1}^J (\sigma_j^2+\tau^2)^{-1/2}\exp\left(-\frac{(\bar{y}_{.j}-\hat{\mu})^2}{2(\sigma_j^2+\tau^2)}\right) \\
+\end{aligned}$$
+		
+
+
+
+
+
+
+
+
