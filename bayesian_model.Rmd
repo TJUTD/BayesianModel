@@ -95,11 +95,116 @@ p(\tau|y) &= \frac{p(\mu,\tau|y)}{p(\mu|\tau,y)} \\
 &\propto p(\tau)V_{\mu}^{1/2}\prod_{j=1}^J (\sigma_j^2+\tau^2)^{-1/2}\exp\left(-\frac{(\bar{y}_{.j}-\hat{\mu})^2}{2(\sigma_j^2+\tau^2)}\right) \\
 \end{aligned}$$
 		
+# mixture (identifiability issue)
+$$X\sim \mathrm{normal}(\theta_1+\theta_2,1),\quad \theta_1\sim \mathrm{normal}(\mu_1,\tau_1^2)\ \perp  \theta_2\sim \mathrm{normal}(\mu_2,\tau_2^2)$$
+$$\begin{aligned}
+\theta_1|\theta_2,x & \sim  \mathrm{normal}\left(\frac{\mu_1/\tau_1^2 + x-\theta_2}{1/\tau_1^2+1},\frac{1}{1/\tau_1^2+1}\right) \\
+\theta_2|\theta_1,x & \sim  \mathrm{normal}\left(\frac{\mu_2/\tau_2^2 + x-\theta_1}{1/\tau_2^2+1},\frac{1}{1/\tau_2^2+1}\right)
+\end{aligned}$$
+
+$$\begin{aligned}
+p(\theta_1|x) &\propto \int p(x|\theta_1,\theta_2) p(\theta_1)p(\theta_2) d\theta_2\\
+&\propto \exp\Bigg(-\frac{\theta_1^2 - 2\mu_1\theta_1}{2\tau_1^2}\Bigg)
+\exp\Bigg(-\frac{\theta_1^2-2x\theta_1}{2}\Bigg) \int \exp\Bigg(-\frac{\theta_2^2-2(x-\theta_1)\theta_2}{2}\Bigg)
+\exp\Bigg(-\frac{\theta_2^2 - 2\mu_2\theta_2}{2\tau_2^2}\Bigg)d\theta_2\\
+&\propto \exp\Bigg(-\frac{\theta_1^2 - 2\mu_1\theta_1}{2\tau_1^2}\Bigg)
+\exp\Bigg(-\frac{\theta_1^2-2x\theta_1}{2}\Bigg) \int \exp\Bigg(-\frac{1}{2}(1+1/\tau_2^2)\theta_2^2 + (x-\theta_1+\mu_2/\tau_2^2)\theta_2\Bigg)d\theta_2\\
+&\propto \exp\Bigg(-\frac{\theta_1^2 - 2\mu_1\theta_1}{2\tau_1^2}\Bigg)
+\exp\Bigg(-\frac{\theta_1^2-2x\theta_1}{2}\Bigg) \exp\Bigg(\frac{1}{2(1+1/\tau_2^2)}(x-\theta_1+\mu_2/\tau_2^2)^2\Bigg)\\
+&\propto \exp\Bigg(-\frac{1}{2}[1+1/\tau_1^2-1/(1+1/\tau_2^2)]\theta_1^2 + [x + \mu_1/\tau_1^2 - (x+\mu_2/\tau_2^2)/(1+1/\tau_2^2)]\theta_1\Bigg)\\
+\theta_1|x&\sim \mathrm{normal}\left(\frac{x + \mu_1/\tau_1^2 - (x+\mu_2/\tau_2^2)/(1+1/\tau_2^2)}{1+1/\tau_1^2-1/(1+1/\tau_2^2)},\frac{1}{1+1/\tau_1^2-1/(1+1/\tau_2^2)}\right)\\
+&\sim \mathrm{normal}\left(\frac{\tau_1^2(x - \mu_2) + (1+\tau_2^2)\mu_1}{1+\tau_1^2+\tau_2^2},\frac{\tau_1^2(1+\tau_2^2)}{1+\tau_1^2+\tau_2^2}\right)\\
+&\sim \mathrm{normal}\left(\frac{\mu_1/\tau_1^2 + (x - \mu_2)/(1+\tau_2^2)}{1/\tau_1^2+1/(1+\tau_2^2)},\frac{1}{1/\tau_1^2+1/(1+\tau_2^2)}\right)\\
+\theta_2|x&\sim \mathrm{normal}\left(\frac{\mu_2/\tau_2^2 + (x - \mu_1)/(1+\tau_1^2)}{1/\tau_2^2+1/(1+\tau_1^2)},\frac{1}{1/\tau_2^2+1/(1+\tau_1^2)}\right)
+\end{aligned}$$
+
+```{r}
+a1 <- 50; a2 <- 50
+b1 <- 10; b2 <- 20
+y <- 0; S <- 1000
+mtheta1  <-  matrix(nrow = S, ncol = 5)
+mtheta2  <-  matrix(nrow = S, ncol = 5)
+mtheta1[1,1] <- 45
+
+set.seed(1)
+
+for (r in 1:5) {
+  for(i in 1:S){
+    if (i == 1) {
+      theta1 <- 45
+    } else {
+      theta1 <- mtheta1[i-1,r]
+    }
+    m2 <- (b2^2*(y-theta1)+a2)/(b2^2+1)
+    sigma2 <- sqrt(b2^2/(b2^2+1))
+    mtheta2[i,r] <- rnorm(1,m2,sigma2)
+    
+    theta2 <- mtheta2[i,r]
+    m1 <- (b1^2*(y-theta2)+a1)/(b1^2+1)
+    sigma1 <- sqrt(b1^2/(b1^2+1))
+    mtheta1[i,r] <- rnorm(1,m1,sigma1)
+  }
+}
 
 
+mmu <- mtheta1 + mtheta2
 
 
+par(mfrow = c(2,2))
+matplot(mtheta1, type = "l", xlab = "Iterations", main = expression(theta[1]))
+matplot(mtheta2, type = "l", xlab = "Iterations", main = expression(theta[2]))
+matplot(mmu, type = "l", xlab = "Iterations", main = expression(mu))
+colMeans(mmu)
+```
 
+# measures of predictive accuracy
 
+$$\begin{aligned}
+\mbox{elpd} &= \mbox{expected log predictive density for a new data point}\\
+&= \mathrm{E}_f(\log p_{\mathrm{post}}(\tilde{y}_i)) = \int (\log p_{\mathrm{post}}(\tilde{y}_i))f(\tilde{y}_i)d\tilde{y}_i\\
+\mbox{elppd} &= \mbox{expected log pointwise predictive density for a new dataset}\\
+&= \sum_{i=1}^n \mathrm{E}_f(\log p_{\mathrm{post}}(\tilde{y}_i)) \\
+\mbox{lppd} &= \mbox{log pointwise predictive density}\\
+&= \log\prod_{i=1}^n p_{\mathrm{post}}(y_i) = \sum_{i=1}^n \log \int p(y_i|\theta)p_{\mathrm{post}}(\theta)d\theta \\
+\mbox{computed lppd} &= \mbox{computed log pointwise predictive density}\\
+&= \sum_{i=1}^n \log \left( \frac{1}{S} \sum_{s=1}^S  p(y_i|\theta^s) \right)
+\end{aligned}
+$$
 
+Akaike information criterion (AIC)
+$$\begin{aligned}
+\widehat{\mathrm{elpd}}_{\mathrm{AIC}} &= \log p(y|\hat{\theta}_{\mathrm{mle}}) - k \\
+\mathrm{AIC} &= -2\log p(y|\hat{\theta}_{\mathrm{mle}}) + 2k 
+\end{aligned}$$
+
+Deviance information criterion (DIC)
+$$\begin{aligned}
+\widehat{\mathrm{elpd}}_{\mathrm{DIC}} &= \log p(y|\hat{\theta}_{\mathrm{Bayes}}) - p_{\mathrm{DIC}} \\
+p_{\mathrm{DIC}} &= 2 \Bigg(\log p(y|\hat{\theta}_{\mathrm{Bayes}}) - \mathrm{E}_{\mathrm{post}}(\log p(y|\theta))\Bigg) \\
+\mbox{computed } p_{\mathrm{DIC}} &= 2 \Bigg(\log p(y|\hat{\theta}_{\mathrm{Bayes}}) - \frac{1}{S} \sum_{s=1}^S \log p(y|\theta^s) \Bigg) \\
+p_{\mathrm{DIC}_\mathrm{alt}} &= 2 \mathrm{var}_{\mathrm{post}}(\log p(y|\theta))) \\
+\mathrm{DIC} &= -2\log p(y|\hat{\theta}_{\mathrm{Bayes}}) + 2p_{\mathrm{DIC}} 
+\end{aligned}$$
+
+Watanabe-Akaike or widely applicable information criterion (WAIC)
+$$\begin{aligned}
+p_{\mathrm{WAIC}_1} &= 2 \sum_{i=1}^n \Bigg(\log (\mathrm{E}_{\mathrm{post}} p(y_i|\theta)) - \mathrm{E}_{\mathrm{post}}(\log p(y_i|\theta)) \Bigg) \\
+\mbox{computed } p_{\mathrm{WAIC}_1} &= 2 \sum_{i=1}^n  \Bigg(\log \Bigg(\frac{1}{S} \sum_{s=1}^S \log p(y_i|\theta^s) \Bigg) - \frac{1}{S} \sum_{s=1}^S \log p(y_i|\theta^s) \Bigg) \\
+p_{\mathrm{WAIC}_2} &= \sum_{i=1}^n \mathrm{var}_{\mathrm{post}}(\log p(y_i|\theta)) \\
+\mbox{computed } p_{\mathrm{WAIC}_2} &= \sum_{i=1}^n \widehat{\mathrm{var}}_{\mathrm{post}}(\log p(y_i|\theta^s)) \\
+\widehat{\mathrm{elppd}}_{\mathrm{WAIC}} &= \mathrm{lppd} - p_{\mathrm{WAIC}} \\
+\mathrm{WAIC} &= -2\mathrm{lppd} + 2p_{\mathrm{WAIC}_2} 
+\end{aligned}$$
+
+`Bayesian' information criterion (BIC)
+$$\mathrm{BIC} = -2 \log p(y|\hat{\theta}) + k\log n$$
+
+Leave-one-out cross-validation
+$$\begin{aligned}
+\mbox{lppd}_{\mbox{loo-cv}} &= \sum_{i=1}^n \log p_{\mbox{post}(-i)}(y_i) \quad\mbox{Bayesian LOO-CV estimate of out of sample predictive fit}\\
+b &= \mbox{lppd} - \overline{\mbox{lppd}}_{-i} \quad\mbox{first order bias correction}\\
+\mbox{lppd}_{\mbox{cloo-cv}} &= \mbox{lppd}_{\mbox{loo-cv}} + b \quad\mbox{bias-corrected Bayesian LOO-CV}\\
+p_{\mbox{loo-cv}} &= \mbox{lppd} - \mbox{lppd}_{\mbox{loo-cv}} \quad\mbox{effective number of parameters}\\
+p_{\mbox{cloo-cv}} &= \mbox{lppd} - \mbox{lppd}_{\mbox{cloo-cv}} = \overline{\mbox{lppd}}_{-i} - \mbox{lppd}_{\mbox{loo-cv}} 
+\end{aligned}$$
 
