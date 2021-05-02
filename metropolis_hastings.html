@@ -125,6 +125,46 @@ $(document).ready(function () {
 </div>
 
 
+<div id="importance-sampling" class="section level1">
+<h1>importance sampling</h1>
+<p><span class="math display">\[
+\mathrm{E}\{h(\theta|y)\} = \frac{\int [h(\theta)q(\theta|y)/g(\theta)]g(\theta)d\theta}{\int [q(\theta|y)/g(\theta)]g(\theta)d\theta} \Longrightarrow \frac{S^{-1}\sum_{s=1}^S h(\theta^s) w(\theta^s) }{S^{-1}\sum_{s=1}^S w(\theta^s) }, w(\theta^s) = \frac{q(\theta^s|y)}{g(\theta^s)}
+\]</span> effective sample size <span class="math display">\[S_{\mbox{eff}} = \frac{1}{\sum_{s=1}^S (\hat{w}(\theta^s))^2 }\]</span></p>
+<p>sampling-importance resampling (SIR)</p>
+<ul>
+<li><p>sample <span class="math inline">\(\{\theta^1,\dots,\theta^S\}\)</span> from <span class="math inline">\(g(\theta)\)</span></p></li>
+<li><p>sample without replacement <span class="math inline">\(k&lt;S\)</span> <span class="math inline">\(\theta\)</span> from <span class="math inline">\(\{\theta^1,\dots,\theta^S\}\)</span> with probability proportional to <span class="math inline">\(w(\theta^s) = \frac{q(\theta^s|y)}{g(\theta^s)}\)</span></p></li>
+</ul>
+<p>target $0.7(5,3) + 0.3(6,10)</p>
+<p>envelope <span class="math inline">\(\mbox{U}(0,1)\)</span></p>
+<pre class="r"><code>&gt; nsamp &lt;- 200
+&gt; x &lt;- runif(nsamp, 0, 1)
+&gt; # weights
+&gt; w &lt;- (0.7 * dbeta(x, 5, 3) + 0.3 * dbeta(x, 6, 10)) / dunif(x, 0, 1)
+&gt; # standardize
+&gt; wstd &lt;- w / sum(w)
+&gt; 
+&gt; # population mean
+&gt; 0.7 * (5 / (5 + 3)) + 0.3 * (6 / (6 + 10))</code></pre>
+<pre><code>[1] 0.55</code></pre>
+<pre class="r"><code>&gt; # sample mean
+&gt; y &lt;- numeric(nsamp)
+&gt; for (i in 1:nsamp) {
++   if (runif(1, 0, 1) &lt;= 0.7) {
++     y[i] &lt;- rbeta(1, 5, 3)
++   } else  {
++     y[i] &lt;- rbeta(1, 6, 10)
++   }
++ }
+&gt; mean(y)</code></pre>
+<pre><code>[1] 0.5672007</code></pre>
+<pre class="r"><code>&gt; # importance sampling
+&gt; # estimand g(x) = x
+&gt; mean(x * w)</code></pre>
+<pre><code>[1] 0.5347415</code></pre>
+<pre class="r"><code>&gt; sum(x * wstd)</code></pre>
+<pre><code>[1] 0.542958</code></pre>
+</div>
 <div id="metropolis-algorithm" class="section level1">
 <h1>Metropolis algorithm</h1>
 <ul>
@@ -255,7 +295,7 @@ y_1,\dots,y_n |\theta &amp;\overset{i.i.d.}{\sim} \mathrm{normal}(\theta,\sigma^
 </ol>
 <ul>
 <li><ol style="list-style-type: lower-alpha">
-<li>sample <span class="math inline">\(u \sim J_u(u|u^{(s)}, v^{(s)})\)</span></li>
+<li>sample from a proposal distribution (jumping distribution) <span class="math inline">\(u \sim J_u(u|u^{(s)}, v^{(s)})\)</span></li>
 </ol></li>
 <li><ol start="2" style="list-style-type: lower-alpha">
 <li>compute the acceptance ratio <span class="math display">\[r = \frac{p_0(u^*,v^{(s)})}{p_0(u^{(s)},v^{(s)})}\frac{J_u(u^{(s)}|u^*,v^{(s)})}{J_u(u^*{(s)}|u^{(s)},v^{(s)})}\]</span></li>
@@ -283,6 +323,21 @@ y_1,\dots,y_n |\theta &amp;\overset{i.i.d.}{\sim} \mathrm{normal}(\theta,\sigma^
 <li><p>random-walk Metropolis - Metropolis algorithm - symetric proposal distribution <span class="math inline">\(J_u(u|u',v) = J_u(u'|u,v)\)</span></p></li>
 <li><p>Gibbs sampler - full condition distribution proposal <span class="math inline">\(J_u(u'|u,v) = p_0(u'|v)\)</span></p></li>
 </ul>
+<ol style="list-style-type: decimal">
+<li><p>discard the first half as a aconservative choice</p></li>
+<li><p>thin the sequence by keeping evety <span class="math inline">\(k\)</span>th simulation draw due to denpendence such that the total number of iterations saved is n o more than 1000</p></li>
+<li><p>split each saved sequence into two parts (<span class="math inline">\(m\)</span> chains of length <span class="math inline">\(n\)</span>) to assess mixing <span class="math display">\[\begin{aligned}
+\mbox{between-sequence variation }B &amp;= \frac{n}{m-1} \sum_{j=1}^m(\bar{\psi}_{.j} - \bar{\psi}_{..})^2, \mbox{ where }\bar{\psi}_{.j} = \frac{1}{n}\sum_{i=1}^m\bar{\psi}_{ij}, \bar{\psi}_{..} = \frac{1}{m}\sum_{j=1}^m\bar{\psi}_{.j}\\
+\mbox{within-sequence variation }W &amp;= \frac{1}{m} \sum_{j=1}^m s_j^2, \mbox{ where }s_{j}^2 = \frac{1}{n-1}\sum_{i=1}^m(\bar{\psi}_{ij}- \bar{\psi}_{.j})^2 \\
+\widehat{\mbox{Var}}^+ &amp;= \frac{1}{n}B + \frac{n-1}{n}W\\
+\mbox{potential scale reduction } \hat{R} &amp;= \sqrt{\frac{\widehat{\mbox{Var}}^+}{W}}\\
+\mbox{effective size }\hat{n}_{\mbox{eff}} &amp;= \frac{mn}{1+ 2\sum_{t=1}^T\hat{\rho}_t}, \mbox{ where }T\mbox{ is the first odd positive integer for which }\hat{\rho}_{T+1}+\hat{\rho}_{T+2} \mbox{ is negative }\\
+\hat{\rho}_t &amp;= 1- \frac{V_t}{2\widehat{\mbox{Var}}^+}\quad \mbox{from   E}[({\psi}_{i,j}- {\psi}_{i-t,j})^2]=2(1-\rho_t)\mbox{Var}(\psi)\\
+\mbox{varigram } V_t &amp;= \frac{1}{m(n-t)}\sum_{i=t+1}^n\sum_{j=1}^m({\psi}_{i,j}- {\psi}_{i-t,j})^2  \\
+\Bigg(\lim\limits_{n\to\infty} mn \mbox{Var}(\bar{\psi}_{..}) &amp;= \left[1+ 2\sum_{t=1}^{\infty}{\rho}_t\right]\mbox{Var}(\psi|y)\Longrightarrow n_{\mbox{eff}} = \frac{\mbox{Var}(\psi|y)}{\mbox{Var}(\bar{\psi}_{..})} = \frac{mn}{1+ 2\sum_{t=1}^{\infty}{\rho}_t}\Bigg)
+\end{aligned}\]</span> transform sequence distributed far from normal before computing <span class="math inline">\(\hat{R}\)</span> and <span class="math inline">\(\hat{n}_{\mbox{eff}}\)</span> for better perfromance of mean and variance-based convergernce diagnostics</p></li>
+<li><p>stop until <span class="math inline">\(\hat{R}\)</span> near 1 (1.1 as a threshold) and <span class="math inline">\(\hat{n}_{\mbox{eff}} \ge 5m\)</span>. Then collect the <span class="math inline">\(nm\)</span> simulations</p></li>
+</ol>
 <p><br />
 <br />
 <span class="math display">\[\begin{aligned}

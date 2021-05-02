@@ -6,8 +6,50 @@ output: html_document
 ```{R setup, include = FALSE}
 knitr::opts_chunk$set(comment = NA, prompt = TRUE)
 ```
+# importance sampling
+$$
+\mathrm{E}\{h(\theta|y)\} = \frac{\int [h(\theta)q(\theta|y)/g(\theta)]g(\theta)d\theta}{\int [q(\theta|y)/g(\theta)]g(\theta)d\theta} \Longrightarrow \frac{S^{-1}\sum_{s=1}^S h(\theta^s) w(\theta^s) }{S^{-1}\sum_{s=1}^S w(\theta^s) }, w(\theta^s) = \frac{q(\theta^s|y)}{g(\theta^s)}
+$$
+effective sample size
+$$S_{\mbox{eff}} = \frac{1}{\sum_{s=1}^S (\hat{w}(\theta^s))^2 }$$
 
-#Metropolis algorithm
+sampling-importance resampling (SIR)
+
+- sample $\{\theta^1,\dots,\theta^S\}$ from $g(\theta)$ 
+
+- sample without replacement $k<S$ $\theta$ from $\{\theta^1,\dots,\theta^S\}$ with probability proportional to $w(\theta^s) = \frac{q(\theta^s|y)}{g(\theta^s)}$
+
+target $0.7\mbox{beta}(5,3) + 0.3\mbox{beta}(6,10)
+
+envelope $\mbox{U}(0,1)$
+```{r importance sampling}
+nsamp <- 200
+x <- runif(nsamp, 0, 1)
+# weights
+w <- (0.7 * dbeta(x, 5, 3) + 0.3 * dbeta(x, 6, 10)) / dunif(x, 0, 1)
+# standardize
+wstd <- w / sum(w)
+
+# population mean
+0.7 * (5 / (5 + 3)) + 0.3 * (6 / (6 + 10))
+# sample mean
+y <- numeric(nsamp)
+for (i in 1:nsamp) {
+  if (runif(1, 0, 1) <= 0.7) {
+    y[i] <- rbeta(1, 5, 3)
+  } else  {
+    y[i] <- rbeta(1, 6, 10)
+  }
+}
+mean(y)
+# importance sampling
+# estimand g(x) = x
+mean(x * w)
+sum(x * wstd)
+```
+
+
+# Metropolis algorithm
 
 * a symmetric proposal distribution. uniform($\theta^{(s)}-\delta,\theta^{(s)}+\delta$), normal($\theta^{(s)},\delta^2$)
 
@@ -146,7 +188,7 @@ for (k in 1:5) {
 
 1. update $U$:
 
-- (a) sample $u \sim J_u(u|u^{(s)}, v^{(s)})$
+- (a) sample from a proposal distribution (jumping distribution) $u \sim J_u(u|u^{(s)}, v^{(s)})$
   
 - (b) compute the acceptance ratio
     $$r = \frac{p_0(u^*,v^{(s)})}{p_0(u^{(s)},v^{(s)})}\frac{J_u(u^{(s)}|u^*,v^{(s)})}{J_u(u^*{(s)}|u^{(s)},v^{(s)})}$$
@@ -169,6 +211,25 @@ for (k in 1:5) {
 * random-walk Metropolis - Metropolis algorithm - symetric proposal distribution  $J_u(u|u',v) = J_u(u'|u,v)$  
 
 * Gibbs sampler - full condition distribution proposal  $J_u(u'|u,v) = p_0(u'|v)$   
+
+1. discard the first half as a aconservative choice
+
+2. thin the sequence by keeping evety $k$th  simulation draw due to denpendence such that the total number of iterations saved is n o more than 1000
+
+3. split each saved sequence into two parts ($m$ chains of length $n$) to assess mixing 
+$$\begin{aligned}
+\mbox{between-sequence variation }B &= \frac{n}{m-1} \sum_{j=1}^m(\bar{\psi}_{.j} - \bar{\psi}_{..})^2, \mbox{ where }\bar{\psi}_{.j} = \frac{1}{n}\sum_{i=1}^m\bar{\psi}_{ij}, \bar{\psi}_{..} = \frac{1}{m}\sum_{j=1}^m\bar{\psi}_{.j}\\
+\mbox{within-sequence variation }W &= \frac{1}{m} \sum_{j=1}^m s_j^2, \mbox{ where }s_{j}^2 = \frac{1}{n-1}\sum_{i=1}^m(\bar{\psi}_{ij}- \bar{\psi}_{.j})^2 \\
+\widehat{\mbox{Var}}^+ &= \frac{1}{n}B + \frac{n-1}{n}W\\
+\mbox{potential scale reduction } \hat{R} &= \sqrt{\frac{\widehat{\mbox{Var}}^+}{W}}\\
+\mbox{effective size }\hat{n}_{\mbox{eff}} &= \frac{mn}{1+ 2\sum_{t=1}^T\hat{\rho}_t}, \mbox{ where }T\mbox{ is the first odd positive integer for which }\hat{\rho}_{T+1}+\hat{\rho}_{T+2} \mbox{ is negative }\\
+\hat{\rho}_t &= 1- \frac{V_t}{2\widehat{\mbox{Var}}^+}\quad \mbox{from   E}[({\psi}_{i,j}- {\psi}_{i-t,j})^2]=2(1-\rho_t)\mbox{Var}(\psi)\\
+\mbox{varigram } V_t &= \frac{1}{m(n-t)}\sum_{i=t+1}^n\sum_{j=1}^m({\psi}_{i,j}- {\psi}_{i-t,j})^2  \\
+\Bigg(\lim\limits_{n\to\infty} mn \mbox{Var}(\bar{\psi}_{..}) &= \left[1+ 2\sum_{t=1}^{\infty}{\rho}_t\right]\mbox{Var}(\psi|y)\Longrightarrow n_{\mbox{eff}} = \frac{\mbox{Var}(\psi|y)}{\mbox{Var}(\bar{\psi}_{..})} = \frac{mn}{1+ 2\sum_{t=1}^{\infty}{\rho}_t}\Bigg)
+\end{aligned}$$
+transform sequence distributed far from normal before computing $\hat{R}$ and $\hat{n}_{\mbox{eff}}$ for better perfromance of mean and variance-based convergernce diagnostics
+
+4. stop until $\hat{R}$ near 1 (1.1 as a threshold) and $\hat{n}_{\mbox{eff}} \ge 5m$. Then collect the $nm$ simulations 
 
 \
 

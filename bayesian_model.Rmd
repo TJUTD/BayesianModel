@@ -208,3 +208,75 @@ p_{\mbox{loo-cv}} &= \mbox{lppd} - \mbox{lppd}_{\mbox{loo-cv}} \quad\mbox{effect
 p_{\mbox{cloo-cv}} &= \mbox{lppd} - \mbox{lppd}_{\mbox{cloo-cv}} = \overline{\mbox{lppd}}_{-i} - \mbox{lppd}_{\mbox{loo-cv}} 
 \end{aligned}$$
 
+# missing data
+sampling model and missing-data model
+$$p(y_{\mbox{obs}},I|x,\theta,\phi) = \int p(y,I|x,\theta,\phi)dy_{\mbox{mis}}$$
+
+posterior
+$$p(\theta,\phi|x,y_{\mbox{obs}},I) \propto p(\theta,\phi|x)\int p(y|x,\theta)p(I|x,\theta,\phi)dy_{\mbox{mis}}$$
+
+- superpopulation inference $p(\theta,\phi|x,y_{\mbox{obs}},I)$
+- finite-population inference $p(y_{\mbox{mis}}|x,y_{\mbox{obs}},I,\theta,\phi)$
+- multiple imputations $p(y_{\mbox{mis}_i}|x,y_{\mbox{obs}},I,\hat{\theta}_i,\hat{\phi}_i)$
+
+Ignorability
+$$p(\theta|x,y_{\mbox{obs}},I) = p(\theta|x,y_{\mbox{obs}}) \propto p(\theta|x)\int p(y|x,\theta)dy_{\mbox{mis}}$$
+- missing at random $p(I|x,y,\phi) = p(I|x,y_{\mbox{obs}},\phi)$ free of $y_{\mbox{mis}}$
+- distinct parameters $p(\phi|x,\theta) = p(\phi|x)$
+
+ignorable and known designs with no covariates - simple random sampling and completely randomized experiments $p(I|x,y,\phi) = p(I)$
+
+ignorable and known designs given covariates - stratified sampling and randomized
+block experiments.
+
+strongly ignorable and known designs $p(I|x,y,\phi) = p(I|x)$
+
+ignorable and unknown designs - experiments with nonrandom treatment assignments based on fully observed covariates
+
+nonignorable and known designs - censoring at an known point
+
+nonignorable and unknown designs - censoring at an unknown point
+
+propensity score  $P(I_i|X)=\pi_i$
+
+# linear regression
+semiconjugate prior distribution
+$$
+\begin{aligned}
+y|X,\beta,\sigma^2 &\sim \mbox{normal}(X\beta,\sigma^2) \propto \exp(-\mbox{SSR}(\beta)/(2\sigma^2))  \\
+\beta &\sim \mbox{normal}(\beta_0, \Sigma_0)\\
+\beta|y,X,\sigma^2 &\sim \mbox{normal}(\mathbf{m}, \mathbf{V})\\
+\mathbf{m}=\mbox{E}[\beta|y,X,\sigma^2] &= (\Sigma_0^{-1} + X^TX/\sigma^2)^{-1} (\Sigma_0^{-1}\beta_0 + X^Ty/\sigma^2)\\
+\mathbf{V} =\mbox{Var}(\beta|y,X,\sigma^2) &= (\Sigma_0^{-1} + X^TX/\sigma^2)^{-1}
+\end{aligned}
+$$
+$$\begin{aligned}
+\gamma = 1/\sigma^2 &\sim \mbox{gamma}(\nu_0/2, \nu_0\sigma_0^2/2)\\
+\gamma|y,X,\beta &\sim \mbox{gamma}((\nu_0+n)/2, [\nu_0\sigma_0^2+\mbox{SSR}(\beta)]/2)\\
+\sigma^2|y,X,\beta &\sim \mbox{inverse-gamma}((\nu_0+n)/2, [\nu_0\sigma_0^2+\mbox{SSR}(\beta)]/2)
+\end{aligned}$$
+
+$$\beta^{(s)}\sim\mbox{normal}(\mathbf{m}^{(s-1)},\mathbf{V}^{(s-1)}) \longrightarrow \mbox{SSR}(\beta^{(s)}) \longrightarrow \sigma^{2(s)}\sim\mbox{inverse-gamma}((\nu_0+n)/2, [\nu_0\sigma_0^2+\mbox{SSR}(\beta^{(s)})]/2) \longrightarrow (\mathbf{m}^{(s)},\mathbf{V}^{(s)})$$
+- unit information prior (Kass and Wasserman, 1995) $\Sigma_0^{-1} = (X^TX)/(n\sigma^2)$, $\beta_0=\hat{\beta}_{\mbox{ols}}$
+
+- $g$-prior (Zellner, 1986) $\Sigma_0 = k(X^TX)^{-1} = (g\sigma^2)(X^TX)^{-1}$, $\beta_0=0$
+$$
+\begin{aligned}
+\mathbf{m} &= (X^TX/(g\sigma^2) + X^TX/\sigma^2)^{-1} (0  + X^Ty/\sigma^2)  = \frac{g}{g+1}\sigma^2(X^TX)^{-1}X^Ty\\
+\mathbf{V}  &= (X^TX/(g\sigma^2) + X^TX/\sigma^2)^{-1} = \frac{g}{g+1}\sigma^2(X^TX)^{-1}\\
+\sigma^2|y,X &\sim \mbox{inverse-gamma}((\nu_0+n)/2, [\nu_0\sigma_0^2+\mbox{SSR}_g]/2)\\
+\mbox{SSR}_g &= y^Ty - \mathbf{m}^T\mathbf{V}^{-1}\mathbf{m} = y^T(\mathbf{I} - \frac{g}{g+1}X(X^TX)^{-1}X^T)y
+\end{aligned}
+$$
+
+
+
+
+
+
+
+
+
+
+
+
