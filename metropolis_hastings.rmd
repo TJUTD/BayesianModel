@@ -208,9 +208,15 @@ for (k in 1:5) {
 
 * independent Metropolis-Hastings - independent proposal $J_u(u^{(s+1)}|u^{(s)},v^{(s)}) = J_u(u^{(s+1)})$
 
-* random-walk Metropolis - Metropolis algorithm - symetric proposal distribution  $J_u(u|u',v) = J_u(u'|u,v)$  
+* random-walk Metropolis - Metropolis algorithm - symetric proposal distribution  $J_u(u|u',v) = J_u(u'|u,v)$
+    + efficient jumping rule: $J(\theta^8|\theta^{t-1}) = \mathrm{dnorm}(\theta^*;\theta^{t-1},c^2\Sigma)$, where $\Sigma$ is the known posterior variance, the most efficient scale $c \approx 2.4/\sqrt{d}$
+    + multidimensional Metropolis algorithm is optimal efficient when its acceptance rate is approximately 23%
+    + adaptive algorithm: adaptive phase is biased. use the fixed phase
+    
 
 * Gibbs sampler - full condition distribution proposal  $J_u(u'|u,v) = p_0(u'|v)$   
+    + reparameterization, auxiliary variables (data augmentation), parameter expansion
+    + BUGS (Bayesian inference Using Gibbs Sampling)
 
 1. discard the first half as a aconservative choice
 
@@ -230,6 +236,25 @@ $$\begin{aligned}
 transform sequence distributed far from normal before computing $\hat{R}$ and $\hat{n}_{\mbox{eff}}$ for better perfromance of mean and variance-based convergernce diagnostics
 
 4. stop until $\hat{R}$ near 1 (1.1 as a threshold) and $\hat{n}_{\mbox{eff}} \ge 5m$. Then collect the $nm$ simulations 
+
+#Hamiltonian Monte Carlo
+
+1. update momentum $\phi \sim N(0,M)$
+
+2. $L$ leapfrog step
+    - half-step update momentum $\phi \leftarrow \phi + \frac{1}{2}\epsilon\frac{d \log p(\theta|y)}{d\theta}$
+    - update position $\theta \leftarrow \theta + \epsilon M^{-1}\phi$
+    - half-step update momentum $\phi \leftarrow \phi + \frac{1}{2}\epsilon\frac{d \log p(\theta|y)}{d\theta}$
+
+3. accept-reject step $r = \frac{p(\theta^*|y)p(\theta^*)}{p(\theta^{t-1}|y)p(\phi^{t-1})}$
+$$\theta^t = \begin{cases}\theta^* &\mbox{with probability }\min(r,1)\\
+\theta^{t-1}&\mbox{otherwise}\end{cases}$$
+
+$\epsilon L =1$ ($\epsilon =01,\ L=10$)
+
+HMC is optimal efficient when its acceptance rate is approximately 65%
+
+Stan (Sampling through adaptive neighborhoods)
 
 \
 

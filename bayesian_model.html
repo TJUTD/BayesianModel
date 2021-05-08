@@ -316,6 +316,16 @@ p_{\mbox{cloo-cv}} &amp;= \mbox{lppd} - \mbox{lppd}_{\mbox{cloo-cv}} = \overline
 <p>nonignorable and unknown designs - censoring at an unknown point</p>
 <p>propensity score <span class="math inline">\(P(I_i|X)=\pi_i\)</span></p>
 </div>
+<div id="multiple-imputation" class="section level1">
+<h1>multiple imputation</h1>
+<p>parameter estimate <span class="math inline">\(\hat{\theta}_k\)</span> and associated variance estimate <span class="math inline">\(\widehat{W}_k\)</span> from <span class="math inline">\(K\)</span> imputed data sets <span class="math display">\[\begin{aligned}
+&amp;\mbox{combined estimate } \bar{\theta}_K = \frac{1}{K}\sum_{k=1}^K \hat{\theta}_k \\
+&amp;\mbox{total variance associated with } T_K = W_K + \frac{K+1}{K} B_K\\
+&amp;\mbox{within-imputation variance component } W_K = \frac{1}{K}\sum_{k=1}^K \widehat{W}_k \\
+&amp;\mbox{between-imputation variance component } B_K = \frac{1}{K-1} \sum_{k=1}^K (\hat{\theta}_k - \bar{\theta}_K)^2 \\
+&amp;t\mbox{ distribution approximation with d.f. }=(K-1)\left( 1+ \frac{K}{K+1} \frac{W_K}{B_K} \right)^2 
+\end{aligned}\]</span></p>
+</div>
 <div id="linear-regression" class="section level1">
 <h1>linear regression</h1>
 <p>semiconjugate prior distribution <span class="math display">\[
@@ -341,6 +351,57 @@ y|X,\beta,\sigma^2 &amp;\sim \mbox{normal}(X\beta,\sigma^2) \propto \exp(-\mbox{
 \mbox{SSR}_g &amp;= y^Ty - \mathbf{m}^T\mathbf{V}^{-1}\mathbf{m} = y^T(\mathbf{I} - \frac{g}{g+1}X(X^TX)^{-1}X^T)y
 \end{aligned}
 \]</span></li>
+</ul>
+</div>
+<div id="gaussian-process-regression" class="section level1">
+<h1>Gaussian process regression</h1>
+<ul>
+<li>a Gaussian process <span class="math inline">\(\mu \sim\mbox{GP}(m,k)\)</span> with a mean function <span class="math inline">\(m\)</span> and covariance function <span class="math inline">\(k\)</span> <span class="math display">\[(\mu(x_1),\dots,\mu(x_n)) \sim N_n((m(x_1),\dots,m(x_n)), K(x_1,\dots,x_n))\]</span></li>
+<li><p>a common choice of covariance function <span class="math inline">\(k(x,x') = \tau^2 \exp(-|x-x'|^2/(2l^2))\)</span></p></li>
+<li><p>observe <span class="math inline">\((x_i,y_i)\)</span> and predict <span class="math inline">\(\mu(\tilde{x})\)</span> <span class="math display">\[\begin{aligned}
+\mbox{observation model } y_i &amp;\sim N(\mu_i, \sigma^2) \\
+\mbox{prior } \mu&amp;\sim\mbox{GP(0,k)}\\
+\begin{pmatrix} y \\ \tilde{\mu} \end{pmatrix} &amp;\sim N\left( \begin{pmatrix} 0 \\ 0 \end{pmatrix}, \begin{pmatrix} K(x,x) + \sigma^2I &amp; K(\tilde{x},x) \\K(x,\tilde{x}) &amp; K(\tilde{x},\tilde{x}) \end{pmatrix} \right)\\
+\mbox{posterior } \tilde{\mu}|x,y,\tau,l,\sigma &amp;\sim N(\mbox{E}[\tilde{\mu}], \mbox{Cov}(\tilde{\mu}))\\
+\mbox{E}[\tilde{\mu}]&amp;= K(\tilde{x},x) (K(x,x) + \sigma^2I)^{-1}y\\
+\mbox{Cov}(\tilde{\mu}) &amp;= K(\tilde{x},\tilde{x}) - K(\tilde{x},x) (K(x,x) + \sigma^2I)^{-1}K(x,\tilde{x})
+\end{aligned}\]</span></p></li>
+<li><p>a connection to basis expansion <span class="math inline">\(\mu(x) = \sum_{h=1}^H \beta_h b_h(x)\)</span>, <span class="math inline">\(\beta=(\beta_1,\dots,\beta_H)\sim N_H(\beta_0,\Sigma_{\beta})\)</span> <span class="math display">\[\begin{aligned}
+(\mu(x_1),\dots,\mu(x_n)) &amp;\sim N_n((m(x_1),\dots,m(x_n)), K(x_1,\dots,x_n))\\
+\mbox{mean function } m(x) &amp;= b(x)^T\beta_0\\
+\mbox{covariance function } k(x,x') &amp;= b(x)^T\Sigma_{\beta}b(x')
+\end{aligned}\]</span></p></li>
+</ul>
+</div>
+<div id="dirichlet-process" class="section level1">
+<h1>Dirichlet process</h1>
+<ul>
+<li><p>Bayesian histogram for <span class="math inline">\(y_i\overset{i.i.d.}{\sim}f\)</span> with prespecified knots <span class="math inline">\(\xi = (\xi_0,\dots,\xi_K)\)</span>, <span class="math inline">\(\xi_0&lt;\xi_1&lt;\dots&lt;\xi_K\)</span>, <span class="math inline">\(y_i \in [\xi_0,\xi_K]\)</span> <span class="math display">\[\begin{aligned}
+f(y) &amp;= \sum_{k=1}^K I(\xi_{k-1}&lt;y\le\xi_k) \frac{\pi_k}{\xi_k-\xi_{k-1}} \\
+\mbox{prior } p(\pi|a) &amp;= \frac{\Gamma(\sum_{k=1}^Ka_k)}{\prod_{k=1}^K\Gamma(a_k)}\prod_{k=1}^K \pi_k^{a_k-1}\\
+\mbox{posterior } \pi|y &amp;\sim \mbox{Dirichlet}(a_1+n_1,\dots,a_K+n_K),\quad n_k=\sum_iI(\xi_{k-1}&lt;y_i\le \xi_k)
+\end{aligned}\]</span></p></li>
+<li>a random probability measure <span class="math inline">\(P\)</span> over <span class="math inline">\((\Omega,\mathcal{B})\)</span> assigned a Dirichlet process <span class="math inline">\(\mbox{DP}(\alpha P_0)\)</span>.
+<ul>
+<li>(indirect representation) For finite <span class="math inline">\(B_1,\dots,B_K\)</span> partitioning <span class="math inline">\(\Omega\)</span>, <span class="math display">\[(P(B_1),\dots,P(B_K)) \sim \mbox{Dirichlet}(\alpha P_0(B_1), \dots, \alpha P_0(B_K))\]</span></li>
+<li>(direct representation) stick-breaking construction <span class="math display">\[P(\cdot) = \sum_{k=1}^{\infty} \pi_k \delta_{\theta_k}(\cdot),\quad \pi_k=V_k\prod_{l&lt;k}(1-V_l), \quad V_k\sim \mbox{Beta}(1,\alpha),\quad \theta_k\sim P_0\]</span> <span class="math display">\[\begin{aligned}
+\mbox{observation model } y_i &amp;\overset{i.i.d.}{\sim} P \\
+\mbox{prior } P &amp;\sim \mbox{DP}(\alpha P_0)\\
+\mbox{E}[P(B)] &amp;= P_0(B), \mbox{ for all }B\in \mathcal{B}\\ 
+\mbox{Var}[P(B)] &amp;= \frac{P_0(B)(1-P_0(B))}{1+\alpha}, \mbox{ for all }B\in \mathcal{B}\\ 
+\mbox{posterior } P|y_1,\dots,y_n &amp;\sim \mbox{DP}(\alpha P_0 + \sum_{i=1}^n\delta_{yi})\\
+(P(B_1),\dots,P(B_K))|y_1,\dots,y_n &amp;\sim \mbox{Dirichlet}(\alpha P_0(B_1) + \sum_{i=1}^nI(y_i\in B_1), \dots, \alpha P_0(B_K) + \sum_{i=1}^nI(y_i\in B_K)) \\
+\mbox{E}[P(B)|y_1,\dots,y_n] &amp;= \frac{\alpha}{\alpha + n}P_0(B) + \frac{n}{\alpha + n}\sum_{i=1}^n\frac{1}{n}\delta_{y_i}(B)\\
+\alpha\to 0,\quad P|y_1,\dots,y_n &amp;\sim \mbox{DP}(\sum_{i=1}^n\delta_{y_i})\quad\mbox{Bayesian bootstrap}
+\end{aligned}\]</span></li>
+</ul></li>
+<li><p>DP mixture model <span class="math inline">\(f(y) = \sum_{k=1}^{\infty} \pi_k \mathcal{K}(y|\theta_k^*)\)</span> with <span class="math inline">\(\pi\sim\mbox{DP}(\alpha P_0)\)</span> <span class="math display">\[\begin{aligned}
+y_i &amp;\sim \mathcal{K}(\theta_i)\\
+\theta_i &amp;\sim P\\
+P &amp;\sim \mbox{DP}(\alpha P_0)\\
+\mbox{Polya urn } \theta_i|\theta_{-i} &amp;\sim \frac{\alpha}{\alpha+i-1} P_0(\theta_i) + \sum_{j=1}^{i-1} \frac{1}{\alpha + i-1}\delta_{\theta_j} \\
+\mbox{posterior } \theta_i|\theta^{(-i)} &amp;\sim \frac{\alpha}{\alpha+n-1} P_0(\theta_i) + \sum_{k=1}^{K^{(-i)}} \frac{n_k^{(-i)}}{\alpha + n-1}\delta_{\theta_k^{*(-i)}},\quad \theta_k^{*(-i)} \mbox{ are unique values of }\theta^{(-i)}, \quad n_k^{(-i)}=\sum_{j\ne i}I(\theta_j=\theta_k^*)
+\end{aligned}\]</span></p></li>
 </ul>
 </div>
 

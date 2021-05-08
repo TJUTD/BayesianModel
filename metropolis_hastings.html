@@ -157,13 +157,13 @@ $(document).ready(function () {
 +   }
 + }
 &gt; mean(y)</code></pre>
-<pre><code>[1] 0.5672007</code></pre>
+<pre><code>[1] 0.5633487</code></pre>
 <pre class="r"><code>&gt; # importance sampling
 &gt; # estimand g(x) = x
 &gt; mean(x * w)</code></pre>
-<pre><code>[1] 0.5347415</code></pre>
+<pre><code>[1] 0.4673346</code></pre>
 <pre class="r"><code>&gt; sum(x * wstd)</code></pre>
-<pre><code>[1] 0.542958</code></pre>
+<pre><code>[1] 0.5407171</code></pre>
 </div>
 <div id="metropolis-algorithm" class="section level1">
 <h1>Metropolis algorithm</h1>
@@ -320,8 +320,17 @@ y_1,\dots,y_n |\theta &amp;\overset{i.i.d.}{\sim} \mathrm{normal}(\theta,\sigma^
                                   v^{(s)} &amp; \mbox{ with probability } 1-\min(1,r)\end{cases}\]</span></li>
 </ol></li>
 <li><p>independent Metropolis-Hastings - independent proposal <span class="math inline">\(J_u(u^{(s+1)}|u^{(s)},v^{(s)}) = J_u(u^{(s+1)})\)</span></p></li>
-<li><p>random-walk Metropolis - Metropolis algorithm - symetric proposal distribution <span class="math inline">\(J_u(u|u',v) = J_u(u'|u,v)\)</span></p></li>
-<li><p>Gibbs sampler - full condition distribution proposal <span class="math inline">\(J_u(u'|u,v) = p_0(u'|v)\)</span></p></li>
+<li>random-walk Metropolis - Metropolis algorithm - symetric proposal distribution <span class="math inline">\(J_u(u|u',v) = J_u(u'|u,v)\)</span>
+<ul>
+<li>efficient jumping rule: <span class="math inline">\(J(\theta^8|\theta^{t-1}) = \mathrm{dnorm}(\theta^*;\theta^{t-1},c^2\Sigma)\)</span>, where <span class="math inline">\(\Sigma\)</span> is the known posterior variance, the most efficient scale <span class="math inline">\(c \approx 2.4/\sqrt{d}\)</span></li>
+<li>multidimensional Metropolis algorithm is optimal efficient when its acceptance rate is approximately 23%</li>
+<li>adaptive algorithm: adaptive phase is biased. use the fixed phase</li>
+</ul></li>
+<li>Gibbs sampler - full condition distribution proposal <span class="math inline">\(J_u(u'|u,v) = p_0(u'|v)\)</span>
+<ul>
+<li>reparameterization, auxiliary variables (data augmentation), parameter expansion</li>
+<li>BUGS (Bayesian inference Using Gibbs Sampling)</li>
+</ul></li>
 </ul>
 <ol style="list-style-type: decimal">
 <li><p>discard the first half as a aconservative choice</p></li>
@@ -338,6 +347,23 @@ y_1,\dots,y_n |\theta &amp;\overset{i.i.d.}{\sim} \mathrm{normal}(\theta,\sigma^
 \end{aligned}\]</span> transform sequence distributed far from normal before computing <span class="math inline">\(\hat{R}\)</span> and <span class="math inline">\(\hat{n}_{\mbox{eff}}\)</span> for better perfromance of mean and variance-based convergernce diagnostics</p></li>
 <li><p>stop until <span class="math inline">\(\hat{R}\)</span> near 1 (1.1 as a threshold) and <span class="math inline">\(\hat{n}_{\mbox{eff}} \ge 5m\)</span>. Then collect the <span class="math inline">\(nm\)</span> simulations</p></li>
 </ol>
+</div>
+<div id="hamiltonian-monte-carlo" class="section level1">
+<h1>Hamiltonian Monte Carlo</h1>
+<ol style="list-style-type: decimal">
+<li><p>update momentum <span class="math inline">\(\phi \sim N(0,M)\)</span></p></li>
+<li><span class="math inline">\(L\)</span> leapfrog step
+<ul>
+<li>half-step update momentum <span class="math inline">\(\phi \leftarrow \phi + \frac{1}{2}\epsilon\frac{d \log p(\theta|y)}{d\theta}\)</span></li>
+<li>update position <span class="math inline">\(\theta \leftarrow \theta + \epsilon M^{-1}\phi\)</span></li>
+<li>half-step update momentum <span class="math inline">\(\phi \leftarrow \phi + \frac{1}{2}\epsilon\frac{d \log p(\theta|y)}{d\theta}\)</span></li>
+</ul></li>
+<li><p>accept-reject step <span class="math inline">\(r = \frac{p(\theta^*|y)p(\theta^*)}{p(\theta^{t-1}|y)p(\phi^{t-1})}\)</span> <span class="math display">\[\theta^t = \begin{cases}\theta^* &amp;\mbox{with probability }\min(r,1)\\
+\theta^{t-1}&amp;\mbox{otherwise}\end{cases}\]</span></p></li>
+</ol>
+<p><span class="math inline">\(\epsilon L =1\)</span> (<span class="math inline">\(\epsilon =01,\ L=10\)</span>)</p>
+<p>HMC is optimal efficient when its acceptance rate is approximately 65%</p>
+<p>Stan (Sampling through adaptive neighborhoods)</p>
 <p><br />
 <br />
 <span class="math display">\[\begin{aligned}
