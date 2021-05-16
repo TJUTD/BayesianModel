@@ -1,0 +1,298 @@
+---
+title: Monte Carlo Strategies
+output: html_document
+---
+
+```{R setup, include = FALSE}
+knitr::opts_chunk$set(comment = NA, prompt = TRUE)
+```
+
+\newcommand{\bbP}{\mathbb{P}}
+\newcommand{\bbE}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\bbR}{\mathbb{R}}
+
+\newcommand{\hmu}{\hat{\mu}}
+\newcommand{\tmu}{\tilde{\mu}}
+
+\newcommand{\cS}{\mathcal{S}}
+\newcommand{\cX}{\mathcal{X}}
+\newcommand{\bx}{\mathbf{x}}
+
+Boltzmann distribution (Gibbs distribution) $\pi(\bx) = \frac{1}{Z}e^{-\frac{U(\bx)}{kT}}$
+
+- configuration of a physical system $\bx$ 
+- potential energy $U(\bx)$
+- temperature $T$
+- Boltzmann constant $k$
+- partition function $Z=Z(T)$
+- internal energy $\langle U\rangle = \bbE_{\pi}\{U(\bx)\}$
+- set $\beta = \frac{1}{kT}$, $\frac{\partial \log(Z)}{\partial \beta}= - \langle U\rangle$
+- free energy $F=-kT\log(Z)$
+- specific heat of the system $C = \frac{\partial \langle U\rangle}{\partial T}       =\frac{1}{kT^2}\Var_{\pi}\{U(\bx)\}$
+- the system's entropy $S = (\langle U\rangle - F)/T$
+
+$2$-$D$ Ising model on a $N\times N$ lattice space $\mathcal{L}=\{(i,j),i,j=1,\dots,N \}$
+$$U(\bx) = -J\sum_{\sigma\sim\sigma'} x_{\sigma}x_{\sigma'} + \sum_{\sigma}h_{\sigma}x_{\sigma}$$
+
+- configuration of the whole system $\mathbf{x}=$ $\{$ $x_{\sigma}:$ $\sigma \in \mathcal{L}$ $\}$
+- a particle at site $\sigma$ has either a positive or a negative spin  $x_{\sigma}\in\{+1,-1\}$  
+- sites $\sigma,\sigma'\in\mathcal{L}$ are a neighboring pair $\sigma\sim\sigma'$
+- interaction strength $J$
+- external magnetic field $h_{\sigma}$
+- mean magnetization per spin $\langle m\rangle = \bbE_{\pi}\{\frac{1}{N^2}\left|\sum_{\sigma\in S}x_{\sigma}\right|\}$
+
+simple liquid model $\mathbf{x} = \{x_i\in \bbR^{3}: i=1,\dots,k\}\in \bbR^{3k}$ 
+
+- energy $U(\mathbf{x}) = \sum_{i,j}\Phi(|x_i-x_j|) = \sum_{i,j}\Phi(r_{ij})$
+- Lennard-Jobes pair potential $\Phi(r) = 4\epsilon\left[\left(\frac{\sigma}{r}\right)^{12} -\left(\frac{\sigma}{r}\right)^{6} \right]$
+
+macromolecules model
+
+- energy $U(\mathbf{x}) = \sum_{\mbox{bonds}}\{\mbox{bond terms}\} + \sum_{i,j}\left[\Phi(r_{ij}) + \frac{q_iq_j}{4\pi\epsilon_0r_{ij}}\right]$
+- bond terms $=\sum_{\mbox{bonds}} \frac{k_i}{2}(l_i-l_{i,0})^2 + \sum_{\mbox{angles}} \frac{k_i}{2}(\theta_i-\theta_{i,0})^2 + \sum_{\mbox{torsions}} v(\omega_i)$
+- bond length $l_i$, bond angle $\theta_i$, torsion angle $\omega_i$
+- torsion term $v(\omega_i) = \frac{V_n}{2}(1+\cos(n\omega -\gamma))$
+
+### variance reduction methods
+
+stratified sampling
+
+- estimand $\int_{\cX}f(x)dx$
+- partition $D_1,\dots,D_k$ of $\cX$
+- $\hmu=\hmu_1+\dots+\hmu_k$, $\hmu_i= m_i^{-1}[f(X_{i,1})+\dots+f(X_{i,m_i})]$
+- $\Var(\hat{\mu})=\frac{\sigma_1^2}{m_1} + \dots + \frac{\sigma_k^2}{m_k}$
+
+control variates method
+
+- estimand $\mu = \bbE\{X\}$
+- control variate $C$ with known $\mu_C = \bbE\{C\}$
+    + sample $X(b) = X + b(C-\mu_C)$
+    + $\Var(X(b)) = \Var(X) + 2b\Cov(X,C) + b^2\Var(C)$
+    + set $b=\Cov(X,C)/\Var(C)$, $\Var(X(b)) = (1-\rho_{XC}^2)\Var(X)$
+- control variate $C$ with unknown $\bbE\{C\} = \mu$
+    + sample $X(b) = bX + (1-b)C$
+    + $\Var(X(b)) = b^2\Var(X) + 2b(1-b)\Cov(X,C) + (1-b)^2\Var(C)$
+    + $b = [\Var(C) - \Cov(X,C)] / [\Var(X) - 2\Cov(X,C) + \Var(C)]$
+		
+antithetic variates method (Hammersley and Morton, 1956)
+
+- sample pair $X=F^{-1}(U)$, $X'=F^{-1}(1-U)$ instead of two independent Monte Carlo draws for estimating $\bbE\{X\}$
+- cdf $F$ is monotone, $\Cov(X,X')=\bbE\{[F^{-1}(U)-F^{-1}(U')][F^{-1}(1-U)-F^{-1}(1-U')]\}\le 0$
+
+Rao-Blackwellization (Bickel and Doksum, 2000)
+
+- estimand $I = \bbE\{h(X)\}$
+- $X = (x_1,X_2)$. analytic $\bbE\{h(X)|X_2\}$ 
+- histogram estimator $\hat{I} = \frac{1}{m}\sum_{l=1}^m h(X^{(l)})
+- mixture estimator $\tilde{I} = \frac{1}{m}\sum_{l=1}^m \bbE\{h(X)|X_2^{(l)}\}$
+
+chain-structure model
+
+- $\pi(\bx) \propto \exp\left( -\sum_{i=1}^d h_i(x_{i-1},x_i) \right)$
+- Markovian $\pi(x_i|\bx_{-i}) \propto \exp\left( -h_i(x_{i-1},x_i) -h_{i+1}(x_{i},x_{i+1}) \right)$
+- hidden Markov model (HMM) when $x_i \in \mathcal{S} = \{s_1,\dots,s_k\}$
+- optimization by dynamic programming $O(dk^2)$
+$$m_1(x)=\min\limits_{s_i\in\cS}h_1(s_i,x),\quad m_t(x)=\min\limits_{s_i\in\cS}\{m_{t-1}(s_i)+h_t(s_i,x)\},\quad x=s_1,\dots,s_k$$
+$$\hat x_1=\arg\min\limits_{s_i\in\cS} m_d(s_i),\quad \hat x_t=\arg\min\limits_{s_i\in\cS}\{m_{t}(s_i)+h_{t+1}(s_i,\hat x_{t+1})\},\quad t=d-1,\dots,1
+$$
+- exact simulation 
+    - partition function $Z=\sum_{\bx}\exp(-H(\bx))=\sum_{x\in\cS} V_d(x)$
+$$V_1(x) = \sum_{x_0\in\cS}e^{-h_1(x_0,x)},\quad V_t(x) = \sum_{y\in\cS}V_{t-1}(y)e^{-h_t(y,x)},\quad t=2,\dots,d$$
+$$x_d \sim V_d(x)/Z,\quad x_t \sim \frac{V_{t}(x)e^{-h_{t+1}(x,x_{t+1})}}{\sum_{y\in\cS}V_{t}(y)e^{-h_{t+1}(y,x_{t+1})}},\quad t=d-1,\dots,1$$ 
+    - Ising model $\pi(\bx) = Z^{-1}\exp(\beta(x_0x_1 + \dots + x_{d-1}x_d)), \quad x_i\in \{-1,+1\}$
+$$V_1(x) = e^{\beta x} + e^{-\beta x} = e^{\beta} +e^{-\beta },\quad V_t(x) = (e^{\beta} + e^{-\beta})^t,\quad Z = 2(e^{\beta} + e^{-\beta})^d$$
+    - graphical model, peeling algorithm / forward-summation-backward-sampling method
+        - $\bx_C = \{x_i,i\in C\}$, clique $C\in \mathcal{C} \subset 2^{\{1,\dots,d\}}$ (Lauritzen and Spiegelhalter, 1998), connected  $C_i\cap C_j \ne \emptyset$
+
+## importance sampling 
+$$\mu=\bbE_{\pi}\{h(\bx)\}=\bbE_{g}\{w(\bx)h(\bx)\},\quad w=\pi(\bx)/g(\bx)$$
+
+- normalized weight $\hmu = \frac{w^{(1)}h(\bx^{(1)})+\dots+w^{(n)}h(\bx^{(n)})}{w^{(1)}+\dots+w^{(n)}}=\frac{\overline{Z}}{\overline{W}}$
+    - know $\pi(\bx)/g(\bx)$ up to a multiplicative constant
+    - often a smaller MSE than $\tmu$
+- unbiased estimate $\tmu = n^{-1}[w^{(1)}h(\bx^{(1)})+\dots+w^{(n)}h(\bx^{(n)})]$
+- Effective Sample Size $=\frac{\Var_{\pi}(\bar{\mu})}{\Var_{g}(\hmu)}=\frac{n}{1+\Var_g(w(\bx))}$, direct sample $\bar{\mu}=n^{-1}[h(y^{(1)})+\dots+h(y^{(n)})]=\overline{H}$,  $y^{(i)}\sim\pi$
+$$\begin{aligned}
+  \Var_g(\hmu) &=\Var_g(\overline{Z}/\overline{W}) \approx \begin{bmatrix} \frac{1}{\bbE_g\{W\}} & -\frac{\bbE_g\{Z\}}{\bbE_g^2\{W\}} \end{bmatrix} \frac{1}{n}\begin{bmatrix} \Var_g(Z) & \Cov_g(Z,W)\\ \Cov_g(W,Z)   & \Var_g(W)  \end{bmatrix} \begin{bmatrix} \frac{1}{\bbE_g\{W\}} \\ -\frac{\bbE_g\{Z\}}{\bbE_g^2\{W\}} \end{bmatrix}\\
+	&= \frac{1}{n}\left[ \frac{\Var_g(Z)}{\bbE_g^2\{W\}} - 2 \frac{\bbE_g\{Z\}\Cov_g(Z,W)}{\bbE_g^3\{W\}}  +\frac{\bbE_g^2\{Z\}\Var_g(W)}{\bbE_g^4\{W\}}\right]\\
+	&= n^{-1}[ \Var_g(Z) - 2 \mu\Cov_g(Z,W)  + \mu^2\Var_g(W)]\\
+	&= n^{-1}[ (\bbE_{\pi}\{WH^2\}-\mu) - 2 \mu(\bbE_{\pi}\{WH\} -\mu ) + \mu^2\Var_g(W)]\\	
+	\bbE_{\pi}\{WH^2\}&\approx \bbE_{\pi}\{W\}\bbE_{\pi}^2\{H\} +\frac{1}{2} \mathrm{tr}\left(\begin{bmatrix} 0 & 2\bbE_{\pi}\{H\}\\
+	2\bbE_{\pi}\{H\} & 2\bbE_{\pi}\{W\}\end{bmatrix} \begin{bmatrix} \Var_{\pi}(W) & \Cov_{\pi}(W,H)\\ \Cov_{\pi}(H,W) & \Var_{\pi}(H)  \end{bmatrix}\right) \\
+	&= n^{-1}[ (\mu^2\bbE_{\pi}\{W\} + 2\mu\Cov_{\pi}(H,W) + \bbE_{\pi}\{W\}\Var_{\pi}(H)-\mu^2 )- 2 \mu(\Cov_{\pi}(WH) + \mu\bbE_{\pi}\{W\} -\mu ) + \mu^2\Var_{g}(W)]\\
+	&= n^{-1}[ \bbE_{\pi}\{W\}\Var_{\pi}(H) +\mu^2(1-\bbE_{\pi}\{W\}+\Var_{g}(W))]\\
+	&= n^{-1}[ \bbE_{\pi}\{W\}\Var_{\pi}(H) +\mu^2(1-\bbE_{g}\{W^2\}+\Var_{g}(W))]\\
+	&= n^{-1} \bbE_{\pi}\{W\}\Var_{\pi}(H)\\
+	&=\frac{1+\Var_g(W)}{n}\Var_{\pi}(H)
+\end{aligned}
+$$
+- proper w.r.t $\pi$: $\bbE_g\{h(\bx^{(i)})w^{(i)}\} = c\bbE_{\pi}\{h(\bx)\}$, for all square integrable $h(\cdot)$ $\Longleftrightarrow$ $\frac{\bbE_{g}\{w|\bx\}}{\bbE_{g}\{w\}}g(\bx) = \pi(\bx)$
+
+<!-- - missing data from a bivariate normal distribution -->
+<!-- $$\begin{aligned} -->
+<!-- y &\sim \mbox{N}(0,\Sigma),\quad \Sigma = \begin{bmatrix} \sigma_1^2, \rho\sigma_1\sigma_2\\ \rho\sigma_1\sigma_2 & \sigma_2^2\end{bmatrix}\\ -->
+<!-- \pi(\Sigma) &\propto |\Sigma|^{-(d+1)/2}, \quad d=2\\ -->
+<!-- \pi(\Sigma|y_1,\dots,y_n) &\propto |\Sigma|^{-(n+d+1)/2}\exp(-\mbox{tr}(\Sigma^{-1} S)/2)\sim\mbox{inverse Wishart}(n,S), \quad S = y^Ty\\ -->
+<!-- \Sigma|\mathbf{y}_{\mbox{mis}},\mathbf{y}_{\mbox{obs}} &\sim \mbox{inverse Wishart}(n,S(\mathbf{y}_{\mbox{mis}})) \\ -->
+<!-- y_{\mbox{mis}}|\Sigma,\mathbf{y}_{\mbox{obs}} &= y_{\mbox{mis}}|\Sigma,y_{\mbox{obs}}\sim \mbox{N}(\mu_*,\sigma_*),\quad \mu_*=\rho y_{\mbox{obs}} \sqrt{\sigma_{\mbox{obs}}/\sigma_{\mbox{mis}}},\sigma_*^2=(1-\rho^2)\sigma_{\mbox{obs}} \\ -->
+<!-- \mbox{proposal }g:\ \Sigma &\sim \mbox{inverse Wishart}(n_{\mbox{obs}},S(\mathbf{y}_{\mbox{obs}})) -->
+<!-- \end{aligned}$$ -->
+
+<!-- ```{r misingdata, echo = FALSE} -->
+<!-- library(knitr) -->
+<!-- dat_mis = matrix(c(1,1,-1,-1,2,2,-2,-2,NA,NA,NA,NA,1,-1,1,-1,NA,NA,NA,NA,2,2,-2,-2),nrow = 2, byrow = T) -->
+<!-- kable(as.data.frame(dat_mis), col.names = 1:dim(dat_mis)[2]) -->
+<!-- ``` -->
+<!-- ```{r importance sampling} -->
+<!-- set.seed(123) -->
+<!-- nsamp <- 5000 -->
+<!-- SS_obs <- dat_mis[,1:4] %*% t(dat_mis[,1:4]) -->
+<!-- dat_imp <- dat_mis -->
+<!-- rho <- numeric(nsamp) -->
+
+<!-- # weights -->
+<!-- for (i in 1:nsamp) { -->
+<!--   S_inv <- rWishart(1, 4, SS_obs)[,,1] -->
+<!--   det_S_inv <- S_inv[1,1]*S_inv[2,2] - S_inv[1,2]*S_inv[2,1] -->
+<!--   r <- -S_inv[1,2]/sqrt(S_inv[1,1]*S_inv[2,2]) -->
+<!--   mu1 <- r * dat_mis[1,5:8] * sqrt(S_inv[2,2]/S_inv[1,1]) -->
+<!--   mu2 <- r * dat_mis[2,9:12] * sqrt(S_inv[1,1]/S_inv[2,2]) -->
+<!--   s1 <- sqrt((1-r^2) * S_inv[2,2]/det_S_inv) -->
+<!--   s2 <- sqrt((1-r^2) * S_inv[1,1]/det_S_inv) -->
+<!--   dat_imp[1,9] <- rnorm(1, mean = mu2[1], sd = s2) -->
+<!--   dat_imp[1,10] <- rnorm(1, mean = mu2[2], sd = s2) -->
+<!--   dat_imp[1,11] <- rnorm(1, mean = mu2[3], sd = s2) -->
+<!--   dat_imp[1,12] <- rnorm(1, mean = mu2[4], sd = s2) -->
+<!--   dat_imp[2,5] <- rnorm(1, mean = mu1[1], sd = s1) -->
+<!--   dat_imp[2,6] <- rnorm(1, mean = mu1[2], sd = s1) -->
+<!--   dat_imp[2,7] <- rnorm(1, mean = mu1[3], sd = s1) -->
+<!--   dat_imp[2,8] <- rnorm(1, mean = mu1[4], sd = s1) -->
+<!--   SS_imp <- dat_imp %*% t(dat_imp) -->
+<!--   S_postr <- rWishart(1000, 12, SS_imp) -->
+<!--   rho[i] <- mean(apply(S_postr, 3, function(mat){-mat[1,2]/sqrt(mat[1,1]*mat[2,2])})) -->
+<!-- } -->
+
+<!-- hist(rho, breaks = seq(-1,1,length.out = 41), freq = F, main = expression(rho)) -->
+<!-- rx <- seq(-1,1,length.out = 201) -->
+<!-- ry <- (1-rx^2)^(4.5)/(1.25-rx^2)^8 / integrate(function(x){(1-x^2)^(4.5)/(1.25-x^2)^8},-1,1)$value -->
+<!-- lines(rx,ry) -->
+<!-- ``` -->
+
+<!-- ```{r importance sampling2} -->
+<!-- set.seed(123) -->
+<!-- nsamp <- 5000 -->
+<!-- SS_obs <- dat_mis[,1:4] %*% t(dat_mis[,1:4]) -->
+<!-- dat_imp <- dat_mis -->
+<!-- rho <- numeric(nsamp) -->
+
+<!-- # weights -->
+<!-- for (i in 1:nsamp) { -->
+<!--   S_inv <- rWishart(1, 4, SS_obs)[,,1] -->
+<!--   det_S_inv <- S_inv[1,1]*S_inv[2,2] - S_inv[1,2]*S_inv[2,1] -->
+<!--   r <- -S_inv[1,2]/sqrt(S_inv[1,1]*S_inv[2,2]) -->
+<!--   mu1 <- r * dat_mis[1,5:8] * sqrt(S_inv[2,2]/S_inv[1,1]) -->
+<!--   mu2 <- r * dat_mis[2,9:12] * sqrt(S_inv[1,1]/S_inv[2,2]) -->
+<!--   s1 <- sqrt((1-r^2) * S_inv[2,2]/det_S_inv) -->
+<!--   s2 <- sqrt((1-r^2) * S_inv[1,1]/det_S_inv) -->
+<!--   dat_imp[1,9] <- rnorm(1, mean = mu2[1], sd = s2) -->
+<!--   dat_imp[1,10] <- rnorm(1, mean = mu2[2], sd = s2) -->
+<!--   dat_imp[1,11] <- rnorm(1, mean = mu2[3], sd = s2) -->
+<!--   dat_imp[1,12] <- rnorm(1, mean = mu2[4], sd = s2) -->
+<!--   dat_imp[2,5] <- rnorm(1, mean = mu1[1], sd = s1) -->
+<!--   dat_imp[2,6] <- rnorm(1, mean = mu1[2], sd = s1) -->
+<!--   dat_imp[2,7] <- rnorm(1, mean = mu1[3], sd = s1) -->
+<!--   dat_imp[2,8] <- rnorm(1, mean = mu1[4], sd = s1) -->
+<!--   SS_imp <- dat_imp %*% t(dat_imp) -->
+<!--   rho[i] <- - SS_imp[1,2]/sqrt(SS_imp[1,1]*SS_imp[2,2]) -->
+<!-- } -->
+
+<!-- hist(rho, breaks = seq(-1,1,length.out = 41), freq = F, main = expression(rho)) -->
+<!-- rx <- seq(-1,1,length.out = 201) -->
+<!-- ry <- (1-rx^2)^(4.5)/(1.25-rx^2)^8 / integrate(function(x){(1-x^2)^(4.5)/(1.25-x^2)^8},-1,1)$value -->
+<!-- lines(rx,ry) -->
+<!-- ``` -->
+
+
+<!-- ```{r importance sampling3} -->
+<!-- set.seed(123) -->
+<!-- nsamp <- 5000 -->
+<!-- SS_obs <- dat_mis[,1:4] %*% t(dat_mis[,1:4]) -->
+<!-- rho <- numeric(nsamp) -->
+<!-- w <- numeric(nsamp) -->
+<!-- SS_imp <- matrix(0, nrow = 2, ncol = 2) -->
+
+<!-- # weights -->
+<!-- for (i in 1:nsamp) { -->
+<!--   S_inv <- rWishart(1, 4, SS_obs)[,,1] -->
+<!--   det_S_inv <- S_inv[1,1]*S_inv[2,2] - S_inv[1,2]*S_inv[2,1] -->
+<!--   r <- -S_inv[1,2]/sqrt(S_inv[1,1]*S_inv[2,2]) -->
+<!--   mu1 <- r * dat_mis[1,5:8] * sqrt(S_inv[2,2]/S_inv[1,1]) -->
+<!--   mu2 <- r * dat_mis[2,9:12] * sqrt(S_inv[1,1]/S_inv[2,2]) -->
+<!--   s1 <- sqrt((1-r^2) * S_inv[2,2]/det_S_inv) -->
+<!--   s2 <- sqrt((1-r^2) * S_inv[1,1]/det_S_inv) -->
+<!--   x_1_mis <- rnorm(4, mean = mu2, sd = s2) -->
+<!--   x_2_mis <- rnorm(4, mean = mu1, sd = s1) -->
+<!--   SS_imp[1,1] <- sum(dat_mis[1,5:8]^2) + sum(x_1_mis^2)  -->
+<!--   SS_imp[2,2] <- sum(x_2_mis^2) + sum(dat_mis[2,9:12]^2) -->
+<!--   SS_imp[1,2] <- sum(dat_mis[1,5:8] * x_2_mis) + sum(x_1_mis * dat_mis[2,9:12])  -->
+<!--   SS_imp[2,1] <- SS_imp[1,2] -->
+<!--   SS <- SS_obs + SS_imp  -->
+<!--   rho[i] <- - SS[1,2]/sqrt(SS[1,1]*SS[2,2]) -->
+<!--   mu1_n <- rho[i] * dat_mis[1,5:8] * sqrt(S_inv[2,2]/S_inv[1,1]) -->
+<!--   mu2_n <- rho[i] * dat_mis[2,9:12] * sqrt(S_inv[1,1]/S_inv[2,2]) -->
+<!--   s1_n <- sqrt((1-rho[i]^2) * S_inv[2,2]/det_S_inv) -->
+<!--   s2_n <- sqrt((1-rho[i]^2) * S_inv[1,1]/det_S_inv) -->
+<!--   logw <- sum(dnorm(x_1_mis, mean = mu2_n, sd = s2_n, log = T)) + sum(dnorm(x_2_mis, mean = mu1_n, sd = s1_n, log = T)) - sum(dnorm(x_1_mis, mean = mu2, sd = s2, log = T)) - sum(dnorm(x_2_mis, mean = mu1, sd = s1, log = T)) -->
+<!--   w[i] <- exp(logw) -->
+<!-- } -->
+
+<!-- var(w)/(mean(w)) -->
+
+<!-- summary(rho) -->
+<!-- hist(rho, breaks = seq(-1,1,length.out = 41), freq = F, main = expression(rho)) -->
+
+<!-- rx <- seq(-1,1,length.out = 201) -->
+<!-- ry <- (1-rx^2)^(4.5)/(1.25-rx^2)^8 / integrate(function(x){(1-x^2)^(4.5)/(1.25-x^2)^8},-1,1)$value -->
+<!-- lines(rx,ry) -->
+<!-- ``` -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
