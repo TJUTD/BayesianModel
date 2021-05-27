@@ -19,6 +19,7 @@ knitr::opts_chunk$set(comment = NA, prompt = TRUE)
 \newcommand{\cS}{\mathcal{S}}
 \newcommand{\cX}{\mathcal{X}}
 \newcommand{\bx}{\mathbf{x}}
+\newcommand{\by}{\mathbf{y}}
 
 Boltzmann distribution (Gibbs distribution) $\pi(\bx) = \frac{1}{Z}e^{-\frac{U(\bx)}{kT}}$
 
@@ -259,9 +260,34 @@ $$
 <!-- ``` -->
 
 
-
-
-
+- adaptive importance sampling
+    + $g_0(\bx) = t_{\alpha}(\bx;\mu_0,\Sigma_0)$ $\longrightarrow$ $g_1(\bx) = t_{\alpha}(\bx;\mu_1,\Sigma_1)$
+    + select $\lambda=(\epsilon,\mu,\Sigma)$, $g(\bx; \lambda) = \epsilon g_0(\bx) + (1-\epsilon)t_{\alpha}(\bx;\mu,\Sigma)$ 
+- rejection control (RC)
+    + accept $\bx^{(j)}$ with probability $r^{(j)} = \min\{1,w^{(j)}/c\}$  
+    + if accepted, update $w^{(*j)} = q_cw^{(j)}/r^{(j)}$, $q_c=\int\min\{1,w(\bx)/c\}g(\bx)d\bx$
+- sequential importance sampling
+    + target density $\pi(\bx) = \pi(x_1)\pi(x_2|x_1)\dots \pi(x_d|x_1,\dots,x_{d-1})$
+    + trial density $g(\bx) = g_1(x_1)g_2(x_2|x_1)\dots g_d(x_d|x_1,\dots,x_{d-1})$
+    + auxiliary distributions $\pi_t(\bx)$ approximate $\pi(\bx_t)$
+    + $w_t(\bx_t)=w_{t-1}(\bx_{t-1})\frac{\pi(x_t|\bx_{t-1})}{g_t(x_t|\bx_{t-1})}$, $w_d(\bx) = w(\bx)$
+    + draw $X_t=x_t$ from $g_t(x_t|\bx_{t-1})$, $w_t=w_{t-1}u_t$, $u_t=\frac{\pi_t(\bx_t)}{\pi_{t-1}(bx_{t-1})g_{t}(x_t|bx_{t-1})}$  
+    + RC in SIS, RC$(t_k)$ at check point $0<t_1<t_2<\dots<t_k\le d$
+    + growth method (inversely restricted sampling, Hammersley and Morton, 1954; biased sampling, Rosenbluth and Rosenbluth, 1955) \
+    Self-Avoiding random Walk model $\pi(\bx) = Z_n^{-1}$\
+    $\bbP(x_{t+1}|x_1,\dots,x_t) = n_t^{-1}$, $w(\bx) = n_1\times \dots \times n_{N-1}$
+    SIS. sampling $g_t(x_t|\bx_{t-1})=n_{t-1}^{-1}$, auxiliary $\pi_t(\bx_t) = Z_t^{-1}$, marginal $\pi_t(\bx_{t-1}) = \sum_{x_t}\pi(\bx_{t-1},x_t) = \frac{n_{t-1}}{Z_t}$, conditional $\pi_t(x_t|\bx_{t-1})= n_{t-1}^{-1}$\
+    $w_{t+1}=w_tn_t$, $w_N = \prod_{t\ge 2} \frac{1}{g_t(x_t|x_1,\dots,x_{t-1})}$, $\hat{Z}_N = \bar{w}^{-1}$
+    + sequential imputation (Kong, liu and Wong, 1994)\
+    draw $\by_{\mbox{mis}}$ from $g(\by_{\mbox{mis}}) = f(y_{\mbox{mis},1}|y_{\mbox{obs},1},\theta)\dots    f(y_{\mbox{mis},n}|\by_{\mbox{obs},n},\by_{\mbox{mis},{n-1}},\theta)$\
+    calculate weight $w(\by_{\mbox{mis}}) = f(y_{\mbox{obs},1}|\theta)\dots f(y_{\mbox{obs},n}|\by_{n-1},\theta)$\
+    $\bar{w} = \frac{1}{m}\sum_{i=1}^m w(\by_{\mbox{mis}}^{(i)}) \longrightarrow L(\theta|\by_{\mbox{obs}})$
+    + nonlinear filtering
+    state-space model (hidden Markov model) $\begin{cases}\mbox{(state equation):}& x_t\sim q_t(\cdot|x_{t-1},\theta) \\ \mbox{(observation equation):}& y_t\sim f_t(\cdot|x_{t},\phi) \end{cases}$\
+    Gaussian $f_t, q_t$, linear state-space model, Kalman filter\
+    bootstrap filter (particle filter) (Gordon, Salmond and Smith, 1993)\
+    draw $x_{t+1}^{(*j)}$ from $q_t(x_{t+1}|x_t^{(j)})$, $w^{(j)}\propto f_t(y_{t+1}|x_{t+1}^{(*j)})$, resample $\{x_{t+1}^{(1)},\dots,x_{t+1}^{(m)}\}$ from $\{x_{t+1}^{(*1)},\dots,x_{t+1}^{(*m)}\}$ with probability proportional to $w^{(j)}$
+    
 
 
 

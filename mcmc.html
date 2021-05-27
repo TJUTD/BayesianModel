@@ -356,6 +356,41 @@ $(document).ready(function () {
 <!-- ry <- (1-rx^2)^(4.5)/(1.25-rx^2)^8 / integrate(function(x){(1-x^2)^(4.5)/(1.25-x^2)^8},-1,1)$value -->
 <!-- lines(rx,ry) -->
 <!-- ``` -->
+<ul>
+<li>adaptive importance sampling
+<ul>
+<li><span class="math inline">\(g_0({\mathbf{x}}) = t_{\alpha}({\mathbf{x}};\mu_0,\Sigma_0)\)</span> <span class="math inline">\(\longrightarrow\)</span> <span class="math inline">\(g_1({\mathbf{x}}) = t_{\alpha}({\mathbf{x}};\mu_1,\Sigma_1)\)</span></li>
+<li>select <span class="math inline">\(\lambda=(\epsilon,\mu,\Sigma)\)</span>, <span class="math inline">\(g({\mathbf{x}}; \lambda) = \epsilon g_0({\mathbf{x}}) + (1-\epsilon)t_{\alpha}({\mathbf{x}};\mu,\Sigma)\)</span></li>
+</ul></li>
+<li>rejection control (RC)
+<ul>
+<li>accept <span class="math inline">\({\mathbf{x}}^{(j)}\)</span> with probability <span class="math inline">\(r^{(j)} = \min\{1,w^{(j)}/c\}\)</span><br />
+</li>
+<li>if accepted, update <span class="math inline">\(w^{(*j)} = q_cw^{(j)}/r^{(j)}\)</span>, <span class="math inline">\(q_c=\int\min\{1,w({\mathbf{x}})/c\}g({\mathbf{x}})d{\mathbf{x}}\)</span></li>
+</ul></li>
+<li>sequential importance sampling
+<ul>
+<li>target density <span class="math inline">\(\pi({\mathbf{x}}) = \pi(x_1)\pi(x_2|x_1)\dots \pi(x_d|x_1,\dots,x_{d-1})\)</span></li>
+<li>trial density <span class="math inline">\(g({\mathbf{x}}) = g_1(x_1)g_2(x_2|x_1)\dots g_d(x_d|x_1,\dots,x_{d-1})\)</span></li>
+<li>auxiliary distributions <span class="math inline">\(\pi_t({\mathbf{x}})\)</span> approximate <span class="math inline">\(\pi({\mathbf{x}}_t)\)</span></li>
+<li><span class="math inline">\(w_t({\mathbf{x}}_t)=w_{t-1}({\mathbf{x}}_{t-1})\frac{\pi(x_t|{\mathbf{x}}_{t-1})}{g_t(x_t|{\mathbf{x}}_{t-1})}\)</span>, <span class="math inline">\(w_d({\mathbf{x}}) = w({\mathbf{x}})\)</span></li>
+<li>draw <span class="math inline">\(X_t=x_t\)</span> from <span class="math inline">\(g_t(x_t|{\mathbf{x}}_{t-1})\)</span>, <span class="math inline">\(w_t=w_{t-1}u_t\)</span>, <span class="math inline">\(u_t=\frac{\pi_t({\mathbf{x}}_t)}{\pi_{t-1}(bx_{t-1})g_{t}(x_t|bx_{t-1})}\)</span><br />
+</li>
+<li>RC in SIS, RC<span class="math inline">\((t_k)\)</span> at check point <span class="math inline">\(0&lt;t_1&lt;t_2&lt;\dots&lt;t_k\le d\)</span></li>
+<li>growth method (inversely restricted sampling, Hammersley and Morton, 1954; biased sampling, Rosenbluth and Rosenbluth, 1955)<br />
+Self-Avoiding random Walk model <span class="math inline">\(\pi({\mathbf{x}}) = Z_n^{-1}\)</span><br />
+<span class="math inline">\({\mathbb{P}}(x_{t+1}|x_1,\dots,x_t) = n_t^{-1}\)</span>, <span class="math inline">\(w({\mathbf{x}}) = n_1\times \dots \times n_{N-1}\)</span> SIS. sampling <span class="math inline">\(g_t(x_t|{\mathbf{x}}_{t-1})=n_{t-1}^{-1}\)</span>, auxiliary <span class="math inline">\(\pi_t({\mathbf{x}}_t) = Z_t^{-1}\)</span>, marginal <span class="math inline">\(\pi_t({\mathbf{x}}_{t-1}) = \sum_{x_t}\pi({\mathbf{x}}_{t-1},x_t) = \frac{n_{t-1}}{Z_t}\)</span>, conditional <span class="math inline">\(\pi_t(x_t|{\mathbf{x}}_{t-1})= n_{t-1}^{-1}\)</span><br />
+<span class="math inline">\(w_{t+1}=w_tn_t\)</span>, <span class="math inline">\(w_N = \prod_{t\ge 2} \frac{1}{g_t(x_t|x_1,\dots,x_{t-1})}\)</span>, <span class="math inline">\(\hat{Z}_N = \bar{w}^{-1}\)</span></li>
+<li>sequential imputation (Kong, liu and Wong, 1994)<br />
+draw <span class="math inline">\({\mathbf{y}}_{\mbox{mis}}\)</span> from <span class="math inline">\(g({\mathbf{y}}_{\mbox{mis}}) = f(y_{\mbox{mis},1}|y_{\mbox{obs},1},\theta)\dots f(y_{\mbox{mis},n}|{\mathbf{y}}_{\mbox{obs},n},{\mathbf{y}}_{\mbox{mis},{n-1}},\theta)\)</span><br />
+calculate weight <span class="math inline">\(w({\mathbf{y}}_{\mbox{mis}}) = f(y_{\mbox{obs},1}|\theta)\dots f(y_{\mbox{obs},n}|{\mathbf{y}}_{n-1},\theta)\)</span><br />
+<span class="math inline">\(\bar{w} = \frac{1}{m}\sum_{i=1}^m w({\mathbf{y}}_{\mbox{mis}}^{(i)}) \longrightarrow L(\theta|{\mathbf{y}}_{\mbox{obs}})\)</span></li>
+<li>nonlinear filtering state-space model (hidden Markov model) <span class="math inline">\(\begin{cases}\mbox{(state equation):}&amp; x_t\sim q_t(\cdot|x_{t-1},\theta) \\ \mbox{(observation equation):}&amp; y_t\sim f_t(\cdot|x_{t},\phi) \end{cases}\)</span><br />
+Gaussian <span class="math inline">\(f_t, q_t\)</span>, linear state-space model, Kalman filter<br />
+bootstrap filter (particle filter) (Gordon, Salmond and Smith, 1993)<br />
+draw <span class="math inline">\(x_{t+1}^{(*j)}\)</span> from <span class="math inline">\(q_t(x_{t+1}|x_t^{(j)})\)</span>, <span class="math inline">\(w^{(j)}\propto f_t(y_{t+1}|x_{t+1}^{(*j)})\)</span>, resample <span class="math inline">\(\{x_{t+1}^{(1)},\dots,x_{t+1}^{(m)}\}\)</span> from <span class="math inline">\(\{x_{t+1}^{(*1)},\dots,x_{t+1}^{(*m)}\}\)</span> with probability proportional to <span class="math inline">\(w^{(j)}\)</span></li>
+</ul></li>
+</ul>
 </div>
 
 
