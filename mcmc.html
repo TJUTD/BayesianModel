@@ -389,6 +389,10 @@ calculate weight <span class="math inline">\(w({\mathbf{y}}_{\mbox{mis}}) = f(y_
 Gaussian <span class="math inline">\(f_t, q_t\)</span>, linear state-space model, Kalman filter<br />
 bootstrap filter (particle filter) (Gordon, Salmond and Smith, 1993)<br />
 draw <span class="math inline">\(x_{t+1}^{(*j)}\)</span> from <span class="math inline">\(q_t(x_{t+1}|x_t^{(j)})\)</span>, <span class="math inline">\(w^{(j)}\propto f_t(y_{t+1}|x_{t+1}^{(*j)})\)</span>, resample <span class="math inline">\(\{x_{t+1}^{(1)},\dots,x_{t+1}^{(m)}\}\)</span> from <span class="math inline">\(\{x_{t+1}^{(*1)},\dots,x_{t+1}^{(*m)}\}\)</span> with probability proportional to <span class="math inline">\(w^{(j)}\)</span></li>
+<li>probability dynamic system <span class="math inline">\(\pi_t({\mathbf{x}}_t)\)</span>, either <span class="math inline">\({\mathbf{x}}_{t+1}=({\mathbf{x}}_t,x_{t+1})\)</span> or <span class="math inline">\({\mathbf{x}}_{t+1}={\mathbf{x}}_t\)</span><br />
+set <span class="math inline">\(g_t(x_t|{\mathbf{x}}_{t-1}) = \pi_t(x_{t}|{\mathbf{x}}_{t-1})\)</span>, <span class="math inline">\(w_t = \frac{\pi_t({\mathbf{x}}_{t-1})}{\pi_{t-1}({\mathbf{x}}_{t-1})}\frac{\pi_t(x_{t}|{\mathbf{x}}_{t-1})}{g_t(x_t|{\mathbf{x}}_{t-1})}\)</span><br />
+unnormalized <span class="math inline">\(q_t({\mathbf{x}}_{t}) =Z_t\pi_t({\mathbf{x}}_{t})\)</span>, <span class="math inline">\(w_N = \prod_{t=1}^Nw_t = \frac{Z_N}{Z_1}\frac{\pi_N({\mathbf{x}}_N)}{g_1(x_1)\dots g_N(x_N|{\mathbf{x}}_{N-1})}\)</span>, <span class="math inline">\({\mathbb{E}}(w_N) = \frac{Z_N}{Z_1}\)</span><br />
+Prune-Enriched Rosenbluth Method (PERM) (Grassberger, 1997) <span class="math inline">\(w_t&gt;C_t\)</span> split into <span class="math inline">\(r\)</span> copies with probability <span class="math inline">\(w_t/r\)</span>, <span class="math inline">\(w_t\le c_t\)</span> keep or discard with probability 0.5</li>
 </ul></li>
 </ul>
 </div>

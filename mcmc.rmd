@@ -287,7 +287,10 @@ $$
     Gaussian $f_t, q_t$, linear state-space model, Kalman filter\
     bootstrap filter (particle filter) (Gordon, Salmond and Smith, 1993)\
     draw $x_{t+1}^{(*j)}$ from $q_t(x_{t+1}|x_t^{(j)})$, $w^{(j)}\propto f_t(y_{t+1}|x_{t+1}^{(*j)})$, resample $\{x_{t+1}^{(1)},\dots,x_{t+1}^{(m)}\}$ from $\{x_{t+1}^{(*1)},\dots,x_{t+1}^{(*m)}\}$ with probability proportional to $w^{(j)}$
-    
+    + probability dynamic system $\pi_t(\bx_t)$, either $\bx_{t+1}=(\bx_t,x_{t+1})$ or $\bx_{t+1}=\bx_t$\
+    set $g_t(x_t|\bx_{t-1}) = \pi_t(x_{t}|\bx_{t-1})$, $w_t = \frac{\pi_t(\bx_{t-1})}{\pi_{t-1}(\bx_{t-1})}\frac{\pi_t(x_{t}|\bx_{t-1})}{g_t(x_t|\bx_{t-1})}$\
+    unnormalized $q_t(\bx_{t}) =Z_t\pi_t(\bx_{t})$, $w_N = \prod_{t=1}^Nw_t = \frac{Z_N}{Z_1}\frac{\pi_N(\bx_N)}{g_1(x_1)\dots g_N(x_N|\bx_{N-1})}$, $\bbE(w_N) = \frac{Z_N}{Z_1}$\
+    Prune-Enriched Rosenbluth Method (PERM) (Grassberger, 1997) $w_t>C_t$ split into $r$ copies with probability $w_t/r$, $w_t\le c_t$ keep or discard with probability 0.5    
 
 
 
