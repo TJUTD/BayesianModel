@@ -292,36 +292,148 @@ $$
     unnormalized $q_t(\bx_{t}) =Z_t\pi_t(\bx_{t})$, $w_N = \prod_{t=1}^Nw_t = \frac{Z_N}{Z_1}\frac{\pi_N(\bx_N)}{g_1(x_1)\dots g_N(x_N|\bx_{N-1})}$, $\bbE(w_N) = \frac{Z_N}{Z_1}$\
     Prune-Enriched Rosenbluth Method (PERM) (Grassberger, 1997) $w_t>C_t$ split into $r$ copies with probability $w_t/r$, $w_t\le c_t$ keep or discard with probability 0.5    
 
+# Metropolis algorithm
+target distribution $\pi(\bx)=Z^{-1}\exp(-h(\bx))$
+
+proposal function, trial proposal $T(\bx^{(t)},\bx')=T(\bx',\bx^{(t)})$, change $\Delta h = h(\bx') - h(\bx^{(t)})$
+
+acceptance rejection ratio $r = \pi(\bx')/\pi(\bx^{(t)}) = \exp(\Delta h)$
 
 
+1-D Ising model $U(\bx) = - J \sum_{s=1}^{d-1}x_sx_{s+1}$, $h(\bx)=JU(\bx)/(\beta T) =: -\mu \sum_{s=1}^{d-1}x_sx_{s+1}$ 
+
+$r = \pi(\bx')/\pi(\bx^{(t)}) = \begin{cases}\exp(-2\mu x_j^{(t)}(x_{j-1}^{(t)}+x_{j+1}^{(t)})) & j\ne 1,d\\
+\exp(-2\mu x_j^{(t)}x_{j+1}^{(t)}) & j = 1\\
+\exp(-2\mu x_j^{(t)}x_{j-1}^{(t)}) & j = d\end{case}$
+
+```{r Ising}
+mu <-  1
+d <-  50
+x <- rep(1,d)
+nsamp <- 50000
+s <- rep(0,nsamp+1)
+s[1] <- sum(x)
+for (i in 1:nsamp) {
+  j <- sample(1:d)[1]
+  if (j == 1) {
+    r <- -2 * mu * x[j] * x[j+1]  
+  } else if (j == d) {
+    r <- -2 * mu * x[j] * x[j-1]
+  } else {
+    r <- -2 * mu * x[j] * (x[j-1] + x[j+1])
+  }
+  
+  if (log(runif(1)) <= r) {
+    x[j] <- -x[j]
+  }
+  s[i+1] <- sum(x)
+}
+
+plot(s[1:2000],type ='l', xlab = 'Iteration')
+by10 <- seq(50, nsamp, by = 50)
+acf(s[by10])
+
+mu <-  2
+s <- rep(0,nsamp+1)
+s[1] <- sum(x)
+for (i in 1:nsamp) {
+  j <- sample(1:d)[1]
+  if (j == 1) {
+    r <- -2 * mu * x[j] * x[j+1]  
+  } else if (j == d) {
+    r <- -2 * mu * x[j] * x[j-1]
+  } else {
+    r <- -2 * mu * x[j] * (x[j-1] + x[j+1])
+  }
+  
+  if (log(runif(1)) <= r) {
+    x[j] <- -x[j]
+  }
+  s[i+1] <- sum(x)
+}
+
+plot(s[1:2000],type ='l', xlab = 'Iteration')
+by10 <- seq(50, nsamp, by = 50)
+acf(s[by10])
+```
+
+actual transition function $A(\bx,\by)$, $\int\pi(\bx)A(\bx,\by)d\bx = \pi(\by)$
+
+detailed balance $\pi(\bx)A(\bx,\by) = \pi(\by)A(\by,\bx)$
+
+Metropolis-Hastings $r(\bx,\by)= \min\left\{1, \frac{\pi(\by)T(\by,\bx)}{\pi(\bx)T(\bx,\by)} \right\}$, $A(\bx,\by) = \pi(\by)\min\left\{\frac{T(\bx,\by)}{\pi(\by)}, \frac{T(\by,\bx)}{\pi(\bx)} \right\}$,
+$\pi(\bx)A(\bx,\by) = \min\left\{\pi(\bx)T(\bx,\by), \pi(\by)T(\by,\bx) \right\}$
+
+Baker (1965) $r(\bx,\by)=  \frac{\pi(\by)T(\by,\bx)}{\pi(\by)T(\by,\bx)+\pi(\bx)T(\bx,\by)}$,
+$A(\bx,\by) = \pi(\by)\frac{T(\bx,\by)T(\by,\bx)}{\pi(\by)T(\by,\bx)+\pi(\bx)T(\bx,\by)}$,
+$\pi(\bx)A(\bx,\by) = \pi(\bx)\pi(\by)\frac{T(\bx,\by)T(\by,\bx)}{\pi(\by)T(\by,\bx)+\pi(\bx)T(\bx,\by)}$
+
+Stein $r(\bx,\by)=  \frac{\delta(\bx,\by)}{\pi(\bx)T(\bx,\by)}$, symmetric $\delta(\bx,\by)$, $A(\bx,\by) = \pi(\by)\delta(\bx,\by)$,
+$\pi(\bx)A(\bx,\by) = \pi(\bx)\pi(\by)\delta(\bx,\by)$
+
+Random-walk Metropolis $\bx' =\bx^{(t)} + \epsilon_t$, $\epsilon_t\in g_{\sigma}(\cdot)$ a spherically symmetric distribution
+
+Metropolized independence sampler $\by \sim g(\by)$, $r=\min\left\{1,\frac{w(\by)}{w(\bx^{(t)})}\right\}$, $w(\bx) = \pi(\bx)/g(\bx)$ 
+
+Configurational bias Monte Carlo (CBMC)
+
+- auxiliary distribution $\pi_1(x_1),\pi_2(x_1,x_2),\dots,\pi_{d-1}(\bx_{d-1}),\pi(\bx)$
+- trial sampling distribution $g(\bx)=g_1(x_1)g_2(x_2|x_1)\dots g_d(x_d|\bx_{d-1})$
+- importance weight $w(\by) = \frac{\pi(\by)}{g(\by)} = \frac{\pi_1(y_1)}{g_1(y_1)}\frac{\pi_2(y_1,y_2)}{g_2(y_2|y_1)\pi_1(y_1)}\dots\frac{\pi_d(y_1,\dots,y_d}{g_d(y_d|\by_{d-1})\pi_{d-1}(\by_{d-1})}
 
 
+multiple-try Metropolis (MTM) 
 
+- draw $\by_1\dots,\by_k\sim T(\bx,\cdot)$ and compute $w(\bx,\by)=\pi(\bx)T(\bx,\by)\lambda(\bx,\by)$, ssymmetric $\lambda(\bx,\by)>0$ 
+- draw $\by$ from $\{\by_1\dots,\by_k\}$ with probability $w(\by_j,\bx)$ and draw reference set  $\bx_1^*\dots,x_k^*\sim T(\by,\cdot)$, $\bx_k^*=\bx$
+- accept $\by$ with generalized M-H ratio $r_g = \min\left\{1, \frac{w(\by_1,\bx)+\cdots+w(\by_k,\bx)}{w(\bx_1^*,\by)+\cdots+w(\bx_k^*,\by)}\right\}$
 
+orientational bias Monte Carlo (OBMC) $\lambda(\bx,\by)=T^{-1}(\bx,\by)$
 
+multiple-trial Metropolis independence sampler (MTMIS)
 
+- draw $\by_j\sim p(\by)$ and compute $w(\by_j)=\pi(\by_j)/p(\by_j)$, $W=\sum w(\by_j)$
+- draw $\by$ from $\{\by_1\dots,\by_k\}$ with probability $w(\by_j)$
+- $\bx^{(t+1)}=\by$ with probability $\min\left\{1, \frac{W}{W-w(\by)+w(\bx)}\right\}$ and $\bx^{(t+1)}=\bx$ otherwise
 
+multipoint method 
 
+- draw $\by_j\sim P_j(\cdot|\bx,\by_1,\dots,\by_{j-1})=P_1(\by_1|\bx)$ and compute $w(\bx,\by_{[1:j]})=\pi(\bx)P_j(y_{[1:j]}|\bx)\lambda_j(\bx,y_{[1:j]})$, $\lambda_j(a,b,\dots,z)=\lambda_j(z,\dots,b,a)$ sequentially symmetric
+- draw $\by$ from $\{\by_1\dots,\by_k\}$ with probability $w(\by_{[t:1]},\bx)$
+- draw reference set $\bx_m^*\sim P_m(\cdot|\by,\bx_{[1:m-1]}^*)$, $m=j+1,\dots,k$, $\bx_l^*=\by_{j-l}$, $l=1,2,\dots,j-1$
+- $\bx^{(t+1)}=\by$ with probability $r_{mp}=\min\left\{1, \frac{\sum_{l=1}^k w(\by_{[l:1]},\bx)}{\sum_{l=1}^kw(\bx_{[l:1]}^*,\by)}\right\}$ and $\bx^{(t+1)}=\bx$ otherwise
 
+random-grid method
 
+- generate direction $e$ and a grid size $r$
+- candidate set $\by_l = \bx + l \cdot r\cdot e$
+- draw $\by$ from $\{\by_1\dots,\by_k\}$ with probability $u_j\pi(\by_{j})$
+- reference set $\bx_l^* = \by - l \cdot r\cdot e$
+- accept $\by$ with probability $\min\left\{1, \frac{\sum_{l=1}^k \pi(\by_l)}{\sum_{l=1}^k\pi(\bx_l^*)}\right\}$ 
 
+MCMC estimation of $\bbE_{\pi}h(\bx)$, $m\Var\left(\sum h(\bx^{(l)}\right)=\sigma^2\left[1+ 2 \sum_{j=1}^{m-1}\left(1-\frac{j}{m}\right)\rho_j\right] \approx \sigma^2\left[1+ 2 \sum_{j=1}^{m-1}\rho_j\right]$, $\sigma^2=\Var(h(\bx))$, $\rho_j=\mbox{Corr}(h(\bx^{(1)}),h(\bx^{(j+1)}))$
 
+integrated autocorrelation time $\tau_{\mbox{int}}(h) = \frac{1}{2} + \sum_{j=1}^{\infty}\rho_j$, effective sample size $m/[2\tau_{\mbox{int}}(h)]$
 
+exponential autocorrelation time $\tau_{\mbox{exp}}(h) = \lim\sup_{j\to\infty}\frac{j}{-\log|\rho_j|} \approx \tau_{\mbox{int}}(h)$
 
+relaxation time $\tau_{\mbox{exp}} =\sup_{h\in L^2(\pi)}\tau_{\mbox{exp}}(h)$
 
+$\rho_j(h)=\lambda^j$, $\tau_{\mbox{int}}(h) = \frac{1+\lambda}{2(1-\lambda)}$, $\tau_{\mbox{exp}}(h) = -\frac{1}{\log(|\lambda|)}$, $\tau_{\mbox{exp}} = -\frac{1}{\log(|\lambda_2(T)|)}$, 
 
+Gibbs sampler
 
+random-scan / systematic-scan
 
+slice sampler $S = \{\by\in\bbR^{d+1}:y_{d+1}\le\pi(y_1,\dots,y_d) \}$
 
+- draw $y^{t+1}\sim U(0,\pi(x^{(t)}))$ 
+- draw $\bx^{t+1}\sim U(S)$ 
 
+Metropolized Gibbs sampler $\min\left\{1, \frac{1-\pi(x_i|\bx_{[-i]})}{1-\pi(y_i|\bx_{[-i]})}\right\}$ 
 
+random-ray Monte Carlo (hit-and-run algorithm)
 
-
-
-
-
-
-
-
-
-
+- draw $\by_i\sim T_e(\bx^*,\cdot)$ along direction $e$, $\by_i=\bx+r_je$, $r_j\sim U(-\sigma,\sigma)$ 
+- MTM draw $\by^*$ from $\{\by_1\dots,\by_k\}$ with probability $\pi(\by_j)$, draw reference $\bx'_1,\dots,\bx'_{k-1}\sim T_e(\by^*,\cdot)$, $\bx^*=\bx'_k$,
+$r = =\min\left\{1, \frac{\sum_{l=1}^k \pi(\by_j)T_e(\by_j,\bx^*)}{\sum_{l=1}^k\pi(\bx'_j)T_e(\bx'_j,\by^*)}\right\}$
