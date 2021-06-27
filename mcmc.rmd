@@ -379,7 +379,7 @@ Configurational bias Monte Carlo (CBMC)
 
 - auxiliary distribution $\pi_1(x_1),\pi_2(x_1,x_2),\dots,\pi_{d-1}(\bx_{d-1}),\pi(\bx)$
 - trial sampling distribution $g(\bx)=g_1(x_1)g_2(x_2|x_1)\dots g_d(x_d|\bx_{d-1})$
-- importance weight $w(\by) = \frac{\pi(\by)}{g(\by)} = \frac{\pi_1(y_1)}{g_1(y_1)}\frac{\pi_2(y_1,y_2)}{g_2(y_2|y_1)\pi_1(y_1)}\dots\frac{\pi_d(y_1,\dots,y_d}{g_d(y_d|\by_{d-1})\pi_{d-1}(\by_{d-1})}
+- importance weight $w(\by) = \frac{\pi(\by)}{g(\by)} = \frac{\pi_1(y_1)}{g_1(y_1)}\frac{\pi_2(y_1,y_2)}{g_2(y_2|y_1)\pi_1(y_1)}\dots\frac{\pi_d(y_1,\dots,y_d}{g_d(y_d|\by_{d-1})\pi_{d-1}(\by_{d-1})}$
 
 
 multiple-try Metropolis (MTM) 
@@ -437,3 +437,49 @@ random-ray Monte Carlo (hit-and-run algorithm)
 - draw $\by_i\sim T_e(\bx^*,\cdot)$ along direction $e$, $\by_i=\bx+r_je$, $r_j\sim U(-\sigma,\sigma)$ 
 - MTM draw $\by^*$ from $\{\by_1\dots,\by_k\}$ with probability $\pi(\by_j)$, draw reference $\bx'_1,\dots,\bx'_{k-1}\sim T_e(\by^*,\cdot)$, $\bx^*=\bx'_k$,
 $r = =\min\left\{1, \frac{\sum_{l=1}^k \pi(\by_j)T_e(\by_j,\bx^*)}{\sum_{l=1}^k\pi(\bx'_j)T_e(\bx'_j,\by^*)}\right\}$
+
+data augmentation $p(\theta|\by_{\mbox{obs}}) = \int p(\theta|\by_{\mbox{mis}},\by_{\mbox{obs}})p(\by_{\mbox{mis}}|\by_{\mbox{obs}})d\by_{\mbox{mis}}$
+
+$g(\theta)$ approximates $p(\theta|\by_{\mbox{obs}})$. draw $p(\by_{\mbox{mis}})=\int p(\by_{\mbox{mis}}|\theta,\by_{\mbox{obs}})g(\theta)d\theta$
+
+algorithm: $\by_{\mbox{mis}}^{(t-1,l)}\Longrightarrow \theta^*\sim p(\theta|\by_{\mbox{obs}},\by_{\mbox{mis}}^{(t-1,l)})\Longrightarrow \by_{\mbox{mis}}^{(t,j)}\sim p(\by_{\mbox{mis}}|\by_{\mbox{obs}},\theta^*)$
+
+equivalent to Gibbs sampler $\by_{\mbox{mis}}^{(t-1)}\Longrightarrow \theta^{(t)}\sim p(\theta|\by_{\mbox{obs}},\by_{\mbox{mis}}^{(t-1)})\Longrightarrow \by_{\mbox{mis}}^{(t)}\sim p(\by_{\mbox{mis}}|\by_{\mbox{obs}},\theta^{(t)})$
+
+data augmentation draw $x_1^{(t+1)}\sim  \pi(\cdot|x_2^{(t)}$, $x_2^{(t+1)}\sim  \pi(\cdot|x_1^{(t+1)})$. $L^2_0(\pi)=\{h(\bx)\in L^2(\pi): \bbE\{h(\bx)=0\} \}$
+$$\begin{aligned}
+\Cov (h(x_1^{(0)}),h(x_1^{(1)})) &= \Var_{\pi}(\bbE_{\pi}\{h(x_1)|x_2\}) \\
+\Cov (h(x_1^{(0)}),h(x_1^{(n)})) &= \Var_{\pi}(\bbE_{\pi}\{\dots\bbE_{\pi}\{\bbE_{\pi}\{\bbE_{\pi}\{h(x_1)|x_2\}|x_1\}|x_2\}\dots\}) 
+\end{aligned}$$
+
+random-scan
+$$\begin{aligned}
+\Cov (h(\bx^{(0)}),h(\bx^{(1)})) &= \bbE_{\pi}\{\bbE^2_{\pi}\{h(\bx)|i,\bx_{-i}\}\} \\
+\Cov (h(\bx^{(0)}),h(\bx^{(n)})) &= \Var_{\pi}(\bbE_{\pi}\{\dots\bbE_{\pi}\{\bbE_{\pi}\{\bbE_{\pi}\{h(\bx)|i,\bx_{-i}\}|\bx\}|i,x_{-i}\}\dots\})
+\end{aligned}$$
+
+histogram estimator $\hat{I} = m^{-1}\sum_{k=1}^mh(x_1^{(k)})$, $m^2\Var(\hat I) = m^2\sigma^2_0 + 2(m-1)\sigma^2_1 + 2\sigma^2_{m-1}$, $\sigma_k^2=\Cov(h(x_1^{(0)}),h(x_1^{(k)}))$
+
+mixture estimator $\tilde{I} = m^{-1}\sum_{k=1}^m\bbE\{h(x_1)|x_2^{(k)}\}$ Rao-Blackwellization, $m^2\Var(\tilde I) = m^2\sigma^2_1 + 2(m-1)\sigma^2_2 + 2\sigma^2_{m}\le m^2\Var(\hat I)$ due to monotonicity of the autocovariance
+
+forward operator on $L^2(\pi)$ $Fh(\bx) = \int K(\bx,\by) h(\by)d\by = \bbE\{h(\bx^{(1)})|\bx^{(0)}=\bx\}$, $\|F\|=\sup_{h:\bbE\{h^2\}=1}\|Fh(\bx)\|=1$
+
+forward operator on $L^2_0(\pi)$, $\lambda_1(F_0)=\lambda_2(F)$, spectral radius $\lim_{n\to\infty}\|F_0^n\|^{1/n}=r$ characterizes the rate of convergence of the Markov chain in both reversible and nonreversible cases
+
+standard Gibbs sampler $F_s: x_1\rightarrow x_2\rightarrow\dots\rightarrow x_d$
+
+grouping Gibbs sampler $F_s: x_1\rightarrow x_2\rightarrow\dots\rightarrow (x_{d-1},x_d)$
+
+collapsed Gibbs sampler $F_s: x_1\rightarrow x_2\rightarrow\dots\rightarrow x_{d-1}$
+
+do not introduce unnecessary components into a Gibbs sampler $\|F_c\| \le \|F_g\| \le \|F_s\|$ 
+
+
+
+
+
+
+
+
+
+
