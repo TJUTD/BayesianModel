@@ -18,6 +18,10 @@ knitr::opts_chunk$set(comment = NA, prompt = TRUE)
 
 \newcommand{\cS}{\mathcal{S}}
 \newcommand{\cX}{\mathcal{X}}
+\newcommand{\be}{\mathbf{e}}
+\newcommand{\bm}{\mathbf{m}}
+\newcommand{\bp}{\mathbf{p}}
+\newcommand{\bv}{\mathbf{v}}
 \newcommand{\bx}{\mathbf{x}}
 \newcommand{\by}{\mathbf{y}}
 
@@ -35,7 +39,7 @@ Boltzmann distribution (Gibbs distribution) $\pi(\bx) = \frac{1}{Z}e^{-\frac{U(\
 - the system's entropy $S = (\langle U\rangle - F)/T$
 
 $2$-$D$ Ising model on a $N\times N$ lattice space $\mathcal{L}=\{(i,j),i,j=1,\dots,N \}$
-$$U(\bx) = -J\sum_{\sigma\sim\sigma'} x_{\sigma}x_{\sigma'} + \sum_{\sigma}h_{\sigma}x_{\sigma}$$
+$$U(\bx) = -J\sum_{\sigma\sim\sigma'} x_{\sigma}x_{\sigma'} + \sum_{\sigma}h_{\sigma}(x_{\sigma})$$
 
 - configuration of the whole system $\mathbf{x}=$ $\{$ $x_{\sigma}:$ $\sigma \in \mathcal{L}$ $\}$
 - a particle at site $\sigma$ has either a positive or a negative spin  $x_{\sigma}\in\{+1,-1\}$  
@@ -43,6 +47,10 @@ $$U(\bx) = -J\sum_{\sigma\sim\sigma'} x_{\sigma}x_{\sigma'} + \sum_{\sigma}h_{\s
 - interaction strength $J$
 - external magnetic field $h_{\sigma}$
 - mean magnetization per spin $\langle m\rangle = \bbE_{\pi}\{\frac{1}{N^2}\left|\sum_{\sigma\in S}x_{\sigma}\right|\}$
+
+Potts model $x_l\in\{1,2,\dots,q\}$, $H(\bx)=-J\sum_{i\sim j}\delta_{x_ix_j}-\sum_jh_j(x_j)$
+
+- $q=2$, $H(\bx)=-\frac{1}{2}J\sum_{i\sim j}2\left(\delta_{x_ix_j}-\frac{1}{2}\right) -\sum_jh_j(x_j)$
 
 simple liquid model $\mathbf{x} = \{x_i\in \bbR^{3}: i=1,\dots,k\}\in \bbR^{3k}$ 
 
@@ -302,9 +310,9 @@ acceptance rejection ratio $r = \pi(\bx')/\pi(\bx^{(t)}) = \exp(\Delta h)$
 
 1-D Ising model $U(\bx) = - J \sum_{s=1}^{d-1}x_sx_{s+1}$, $h(\bx)=JU(\bx)/(\beta T) =: -\mu \sum_{s=1}^{d-1}x_sx_{s+1}$ 
 
-$r = \pi(\bx')/\pi(\bx^{(t)}) = \begin{cases}\exp(-2\mu x_j^{(t)}(x_{j-1}^{(t)}+x_{j+1}^{(t)})) & j\ne 1,d\\
+$$r = \pi(\bx')/\pi(\bx^{(t)}) = \begin{cases}\exp(-2\mu x_j^{(t)}(x_{j-1}^{(t)}+x_{j+1}^{(t)})) & j\ne 1,d\\
 \exp(-2\mu x_j^{(t)}x_{j+1}^{(t)}) & j = 1\\
-\exp(-2\mu x_j^{(t)}x_{j-1}^{(t)}) & j = d\end{case}$
+\exp(-2\mu x_j^{(t)}x_{j-1}^{(t)}) & j = d\end{cases}$$
 
 ```{r Ising}
 mu <-  1
@@ -405,10 +413,10 @@ multipoint method
 
 random-grid method
 
-- generate direction $e$ and a grid size $r$
-- candidate set $\by_l = \bx + l \cdot r\cdot e$
+- generate direction $\be$ and a grid size $r$
+- candidate set $\by_l = \bx + l \cdot r\cdot \be$
 - draw $\by$ from $\{\by_1\dots,\by_k\}$ with probability $u_j\pi(\by_{j})$
-- reference set $\bx_l^* = \by - l \cdot r\cdot e$
+- reference set $\bx_l^* = \by - l \cdot r\cdot \be$
 - accept $\by$ with probability $\min\left\{1, \frac{\sum_{l=1}^k \pi(\by_l)}{\sum_{l=1}^k\pi(\bx_l^*)}\right\}$ 
 
 MCMC estimation of $\bbE_{\pi}h(\bx)$, $m\Var\left(\sum h(\bx^{(l)}\right)=\sigma^2\left[1+ 2 \sum_{j=1}^{m-1}\left(1-\frac{j}{m}\right)\rho_j\right] \approx \sigma^2\left[1+ 2 \sum_{j=1}^{m-1}\rho_j\right]$, $\sigma^2=\Var(h(\bx))$, $\rho_j=\mbox{Corr}(h(\bx^{(1)}),h(\bx^{(j+1)}))$
@@ -421,7 +429,7 @@ relaxation time $\tau_{\mbox{exp}} =\sup_{h\in L^2(\pi)}\tau_{\mbox{exp}}(h)$
 
 $\rho_j(h)=\lambda^j$, $\tau_{\mbox{int}}(h) = \frac{1+\lambda}{2(1-\lambda)}$, $\tau_{\mbox{exp}}(h) = -\frac{1}{\log(|\lambda|)}$, $\tau_{\mbox{exp}} = -\frac{1}{\log(|\lambda_2(T)|)}$, 
 
-Gibbs sampler
+### Gibbs sampler
 
 random-scan / systematic-scan
 
@@ -434,9 +442,9 @@ Metropolized Gibbs sampler $\min\left\{1, \frac{1-\pi(x_i|\bx_{[-i]})}{1-\pi(y_i
 
 random-ray Monte Carlo (hit-and-run algorithm)
 
-- draw $\by_i\sim T_e(\bx^*,\cdot)$ along direction $e$, $\by_i=\bx+r_je$, $r_j\sim U(-\sigma,\sigma)$ 
+- draw $\by_i\sim T_e(\bx^*,\cdot)$ along direction $e$, $\by_i=\bx+r_j\be$, $r_j\sim U(-\sigma,\sigma)$ 
 - MTM draw $\by^*$ from $\{\by_1\dots,\by_k\}$ with probability $\pi(\by_j)$, draw reference $\bx'_1,\dots,\bx'_{k-1}\sim T_e(\by^*,\cdot)$, $\bx^*=\bx'_k$,
-$r = =\min\left\{1, \frac{\sum_{l=1}^k \pi(\by_j)T_e(\by_j,\bx^*)}{\sum_{l=1}^k\pi(\bx'_j)T_e(\bx'_j,\by^*)}\right\}$
+$r = \min\left\{1, \frac{\sum_{l=1}^k \pi(\by_j)T_e(\by_j,\bx^*)}{\sum_{l=1}^k\pi(\bx'_j)T_e(\bx'_j,\by^*)}\right\}$
 
 data augmentation $p(\theta|\by_{\mbox{obs}}) = \int p(\theta|\by_{\mbox{mis}},\by_{\mbox{obs}})p(\by_{\mbox{mis}}|\by_{\mbox{obs}})d\by_{\mbox{mis}}$
 
@@ -475,11 +483,137 @@ collapsed Gibbs sampler $F_s: x_1\rightarrow x_2\rightarrow\dots\rightarrow x_{d
 do not introduce unnecessary components into a Gibbs sampler $\|F_c\| \le \|F_g\| \le \|F_s\|$ 
 
 
+Swendsen-Wang algorithm, data augmentation, Ising model
+$$\pi(\bx) \propto \exp(\beta J\sum_{l\sim l'}x_lx_{l'}) \propto \prod_{l\sim l'}\exp(\beta J(1+x_lx_{l'}))$$
+$$\pi(\bx,\mathbf{u}) \propto \prod_{l\sim l'}I(0\le u_{l,l'} \le\exp(\beta J(1+x_lx_{l'})))$$
+$$\pi(\bx,\mathbf{b}) \propto \prod_{l\sim l'}(1+b_{l,l'}(e^{2\beta J}-1))$$
+bonding variable $b_{l,l'}=I(u_{l,l'}>1)$, $\bbP(b_{l,l'}=1)=e^{-2\beta J}$
+
+partial resample on fiber $\mathcal{X}_{\alpha}$, $\mathcal{X} = \cup_{\alpha\in A}\mathcal{X}_{\alpha}$, $\mathcal{X}_{\alpha}\cap\mathcal{X}_{\beta} = \emptyset$,  $\pi(\bx) = \int \nu_{\alpha}(\bx)d\rho(\alpha)$
+
+- Gibbs (axis) move $\alpha\in\bbR$, $\mathcal{X}_{\alpha}=\{\bx:x_1=\alpha\}$, $\nu_{\alpha}=\pi(x_2|x_1)I(x_1=\alpha)$
+
+- $\alpha\in\bbR$, $\mathcal{X}_{\alpha}=\{\bx:x_2=x_1+\alpha\}$, $\nu_{\alpha}=\pi(x_1,x_2)I(x_2=x_1+\alpha)$
+
+- $\alpha\in\bbR\backslash\{0\}$, $\mathcal{X}_{\alpha}=\{\bx:x_1=\alpha x_1\}$, $\nu_{\alpha}=|x_1|\pi(x_1,\alpha x_1)I(x_2=\alpha x_1)$
+
+Gausian random field model $\pi(\bx) \propto \exp\left\{-\frac{1}{2}\sum_{s\sim s'}\beta_{ss'}(x_s-x_{s'})^2-\frac{1}{2}\sum_{s\in\Lambda}\gamma_{s}(x_s-\mu_{s})^2 \right\}$, $s,s'\in\Lambda\subset N\times N$ Markov random field (MRF)
+
+- Gibbs $\pi(x_s|\bx_{[-s]}) \propto \exp\left\{-\frac{1}{2}\left(\gamma_s+\sum_{s'\sim s}\beta_{ss'}\right)\left(x_s-\frac{\gamma_s\mu_s+\sum_{s'\sim s}\beta_{ss'}x_{s'}}{\gamma_s+\sum_{s\sim s'}\beta_{ss'}}\right)^2\right\}$
+
+- coarsing move $\bx \rightarrow (\bx_S+\delta,\bx_{[-S]})$, $\mathcal{X}_{\alpha}=\{\bx:x_{[-S]}=\alpha\}$, draw $p(\delta)\propto\pi(\bx_S+\delta,\bx_{[-S]})$, $\delta\sim N(\mu_*,\sigma_*^2)$, $\mu_*= \frac{\sum_{s'\sim s\in\partial S}\beta_{ss'}(x_s-x_{s'}) + \sum_{s\in S}\gamma_s\mu_s}{\sum_{s'\sim s\in\partial S}\beta_{ss'} + \sum_{s\in S}\gamma_s}$, $\sigma_*^2=\left[\sum_{s'\sim s\in\partial S}\beta_{ss'} + \sum_{s\in S}\gamma_s\right]^{-1}$
+
+generalized Gibbs draw $\gamma$, set $\bx'=\gamma(\bx)$
+
+locally compact group $\Gamma=\{\gamma\}$: locally compact space, group operation $\gamma_1\gamma_2(\bx)=\gamma_1(\gamma_2(\bx))$, continuous $(\gamma_1,\gamma_2)\rightarrow \gamma_1\gamma_2$ and $\gamma\rightarrow\gamma^{-1}$.
+
+left Haar measure $L(B) = \int_BL(d\gamma)=\int_{\gamma_0B}L(d\gamma)=L(\gamma_0B)$, $\gamma_0\in\Gamma$, $B\subset \Gamma$
+
+$\bx\sim\pi(\bx)$, $\gamma\sim p_{\bx}(\gamma)\propto\pi(\gamma(\bx))|J_{\gamma}(\bx)|L(d\gamma)\Longrightarrow\bx'=\gamma(\bx)\sim\pi$
+
+partial resampling $\mathcal{X}_{\alpha}=\{\bx\in\mathcal{X}:\bx=\gamma(\alpha) \}$, $\nu_{\alpha}(\bx)\propto \pi(\gamma(\alpha))|J_{\alpha}(\gamma)|L(d\gamma)I(\bx=\gamma(\alpha))$
+
+Metrpolis $A_{\bx}(\gamma,\gamma')L(d\gamma)$ such that $p_{\bx}(\gamma)d\gamma\propto\pi(\gamma(\bx))|J_{\gamma}(\bx)|L(d\gamma)$ invariant and $A_{\bx}(\gamma,\gamma') = A_{\gamma_0^{-1}\bx}(\gamma\gamma_0,\gamma'\gamma_0)$. If $\bx\sim\pi$ and $\gamma\sim A_{\bx}(\gamma_{\mbox{id}},\gamma)$, then $w=\gamma(\bx)\sim\pi$
+
+parameter expanded data augmentation (PX-DA) draw $\by_{\mbox{mis}}\sim f(\by_{\mbox{mis}}|\theta,\by_{\mbox{obs}})$, draw $\alpha\sim p(\alpha|\by_{\mbox{obs}},\by_{\mbox{mis}})\propto f(\by_{\mbox{obs}},\gamma_{\alpha}(\by_{\mbox{mis}}))|J_{\alpha}(\by_{\mbox{mis}})|dH(\alpha)$, compute $\by'_{\mbox{mis}}=\gamma_{\alpha}(\by_{\mbox{mis}})$, draw $\theta\sim f(\theta|\by_{\mbox{obs}},\by_{\mbox{mis}})$
+
+### hybrid Monte Carlo (HMC) with $L$ (40-70) steps of deterministic Hamiltonian moves
+
+molecular dynamics - Monte Carlo
+
+ergodicity theorem $\lim\limits_{t\to\infty}\frac{1}{t}\int_0^th(\bx_s)ds = Z^{-1}\int h(\bx)\exp(-U(\bx)/\beta T)d\bx$
+
+Newtonian mechanism $d$-dimensional position $\bx(t)$, $d=3N$, $\mathbf{v}(t)=\dot{\bx}(t)$, Newton's law of motion $\mathbf{F}=\mathbf{m}\mathbf{\dot{v}}(t)$, momentum $\mathbf{p}=\mathbf{m}\mathbf{v}$, kinetic energy $k(\mathbf{p})=\frac{1}{2}\left\|\frac{\mathbf{p}}{\sqrt{\mathbf{m}}}\right\|^2$, total energy $H(\bx,\bp)=U(\bx)+k(\bp)$, Hamilton equation $\begin{cases} \dot{\bx}(t)=\frac{\partial H(\bx,\bp)}{\partial \bp}\\\dot{\bp}(t)=-\frac{\partial H(\bx,\bp)}{\partial \bx} \end{cases}$
+
+Verlet algorithm $\bx(t+\Delta t) = 2\bx(t) - \bx(t-\Delta t) - \frac{1}{\bm}\frac{\partial H}{\partial \bx}\Big|_t(\Delta t)^2$, $\bp(t+\Delta t) = \bm \frac{\bx(t+\Delta t) -\bx(t-\Delta t)}{2 \Delta t}$
+
+leap-frog method (Hockney 1970) $\bx(t+\Delta t) = \bx(t)  + \Delta t \frac{\bp(t+\frac{1}{2}\Delta t)}{\bm}$, $\bp(t+\frac{1}{2}\Delta t) = \bp(t-\frac{1}{2}\Delta t) + \frac{\partial H}{\partial \bx}\Big|_t \Delta t$
+
+volume preservation $|V(t)|=\int_{V(t)}d\bx d\bp = \int_{V(0)}d\bx d\bp = |V(0)|$, $V(t) = \{(\bx(t),\bp(t)): (\bx(0),\bp(0))\in V(0)\}$
+
+HMC draw $\bp\sim\phi(\bp)\propto\exp\{-k(\bp)\}$, leap-frog $L$ steps $(\bx,\bp)\to(\bx',\bp')$, acceptance ratio $\min\{1,\exp(-H(\bx',\bp')+H(\bx,\bp))\}$
+
+Langevin-Euler move $d\bx_t = -\frac{1}{2}\frac{\partial U(\bx_t)}{\partial \bx}dt + dW_t \Longrightarrow X_t\sim\pi$, discretization $\bx_{t+1}=\bx_{t} -\frac{1}{2}\frac{\partial U(\bx_t)}{\partial \bx}h +\sqrt{h}Z_t$
+
+generalized HMC $\phi=(\bx,\bp)$, $\pi^*(\phi)T(\phi,\phi')=\pi^*(\phi')T(\phi',\phi)$, acceptance ratio $\min\left\{1,\frac{\pi(\phi^{(1)})/\pi^*(\phi^{(k)})}{\pi(\phi^{(0)})/\pi^*(\phi^{(0)})}\right\}$
+
+surrogate transimition method, a reversible Markov transition $S(\bx,\by)$ leaving $\pi^*(\bx)\propto\exp\{-h^*(\bx)\}$ invariant, $\pi^*(\bx)S(\bx,\by)=\pi^*(\by)S(\by,\bx)$, draw $\by_i\sim S(\by_{i-1},\cdot)$ with acceptance ratio $\min\left\{1,\frac{\pi(\by_k)/\pi^*(\by_k)}{\pi(\bx^{(t)})/\pi^*(\bx^{(t)})}\right\}$, actual transition $A(\bx,\by) = S^{(k)}(\bx,\by)\min\left\{1,\frac{\pi(\by)/\pi^*(\by)}{\pi(\bx)/\pi^*(\bx)}\right\}$
+
+Neal (1994) window method: choose $W<L$, draw $K$ from $\{0,\dots,W-1\}$, obtain trjectory $\{\phi(l):l=-K,\dots,L-K\}$ from $\phi(0)=(\bx^{(t)},\bp^{(t)})$, compute free energy $F(\mathcal{W})=-\log\left\{\sum_{\phi(j)\in\mathcal{W}}\exp(-H(\phi(j)))\right\}$ for acceptance window $\mathcal{A}=\{\phi(l):l=L-K-W+1,\dots,L-K\}$ and rejection window $\mathcal{R}=\{\phi(l):l=-K,\dots,-K+W-1\}$, go to acceptance window with probability $\min\{1,\exp(F(\mathcal{A})-F(\mathcal{R}))\}$ and rejection window otherwise, select state $\phi$ within chosen window with probability $\exp(-H(\phi(j))+F(\mathcal{W}))\}$
+
+multipoint method: obtain trjectory $\{\phi(l):l=1,\dots,L\}$ from $\phi(0)=(\bx^{(t)},\bp^{(t)})$, select $\phi'=\phi(L-K)$ from $\{\phi(l):l=L-M+1,\dots,L\}$ with Boltzmann probabilities $\bbP(\phi'=\phi(L-M+k))\sim w_k\exp(-H(\phi(L-M+k)))$, obtain trajectory $\{\phi(l):l=-1,\dots,-K\}$, accept $\phi'$ with probability $p=\min\left\{1,\frac{\sum_{j=1}^Mw_j\exp(-H(\phi(L-M+j)))}{\sum_{j=1}^Mw_j\exp(-H(\phi(M-K-j)))}\right\}$ and $\phi(0)$ otherwise, renew $\bp^{(t+1)}\sim N(0,\Sigma)$ with $\Sigma=\mbox{diag}(m_1^{-1},\dots,m_d^{-1})$ 
+
+umbrella sampling (Torrie and Valleau 1977) 
+
+- estimand $A=\frac{\int q_1(\bx)d\bx}{\int q_0(\bx)d\bx} = \frac{Z_1}{Z_0}=\bbE_0\left\{\frac{q_1(\bx)}{q_0(\bx)}\right\} = \frac{\bbE_u\{q_1(\bx)/q_u(\bx)\}}{\bbE_u\{q_0(\bx)/q_u(\bx)\}}$
+- umbrella distribution $\pi_u(\bx)\propto w(\Delta h(\bx))\pi_0(\bx)$, $\pi_i(\bx)\propto\exp\{-h_i(\bx)/kT_i\}$, $\Delta h(\bx) = h_1(\bx)/kT_1 - h_0(\bx)/kT_0$
+- when $h_0(\bx)=h_1(\bx)$ but $T_0\ne T_1$, $\pi_{\alpha_i}(\bx)\propto \exp\{-h_0(\bx)/T_{\alpha_i}\}$, $T_0>T_{\alpha_1}>\dots>T_{1}$, $0<\alpha_1<\dots<\alpha_{k-1}=1$, $\hat{A}=\frac{\hat{c}_{\alpha_1}}{\hat{c}_{0}}\times\dots\times\frac{\hat{c}_{1}}{\hat{c}_{\alpha_{k-1}}}$
+- bridge sampling $A=\frac{c_1}{c_0}=\frac{\bbE_0\{q_1(\bx)\alpha(\bx)\}}{\bbE_1\{q_0(\bx)\alpha(\bx)\}}$,  $\hat{A}_{BS}=\frac{\sum_{l=1}^{m_0}q_1(\bx_0^{(l)})\alpha(\bx_0^{(l)})/n_0}{\sum_{l=1}^{m_1}q_1(\bx_1^{(l)})\alpha(\bx_1^{(l)})/n_1}$, $\alpha(\bx)\propto\{m_0\pi_0(\bx)+m_1\pi_1(\bx)\}^{-1}$
+
+simulated annealing (SA) (Kirkpatrick et al. 1983)
+
+- minimum of $h(\bx)$
+- initialize $\bx^{(0)}$ and $T_1$, $N_k$ MCMC iterations $\pi_k(\bx)$ and pass final configuration to next interation
+- global minimum of $h(\bx)$ with probability 1 if $T_k=O(\log(L_k^{-1}))$ with $L_k=N_1+\dots+N_k$
+
+simulated tempering (ST) (Parisi 1992, Geyer and Thompson 1995)
+
+- $\Pi=\{\pi_i(\bx)\propto \exp(-h(\bx)/T_i),i\in I\}$, target distribution when temperature is lowest 
+- $\pi_{st}(\bx,i)\propto c_i\exp(-h(\bx)/T_i)$, $c_i\propto Z_i^{-1}$
+- $(\bx^{(t)},i^{(t)})=(\bx,i)$, draw $u\in U(0,1)$, if $u \le \alpha_0$, $i^{(t+1)}=i$ and draw $\bx^{(t+1)}\sim T_i(\bx,\bx^{(t+1)})$ leaving $\pi_i$ invariant; if $u > \alpha_0$, $\bx^{(t+1)}=\bx$ and draw $i'\sim \alpha(i,i')$ and accept $i^{(t+1)}=i'$ with $\min\left\{1,\frac{c_{i'}\pi_{i'}(\bx)\alpha(i',i)}{c_{i}\pi_{i}(\bx)\alpha(i,i')}\right\}$
+
+parallel tempering (PT) (Greyer 1991)
+
+- $\pi_{pt}(\bx_1,\dots,\bx_I)=\prod_{i\in I}\pi_i(\bx_i)$
+- $(\bx_1^{(t)},\dots,\bx_I^{(t)})$, draw $u\sim U(0,1)$,  if $u \le \alpha_0$, parallel step,  draw each $\bx^{(t+1)}$ via MCMC; if $u > \alpha_0$, swapping step, swap neighhoring pair $\bx_i^{(t)}$ and $\bx_{i+1}^{(t)}$ with  $\min\left\{1,\frac{\pi_{i}(\bx_{i+1}^{(t)})\pi_{i+1}(\bx_i^{(t)})}{\pi_{i}(\bx_{i}^{(t)})\pi_{i+1}(\bx_{i+1}^{(t)})}\right\}$
+
+canonical ensemble simulation - Boltzmann $\pi(\bx)=Z^{-1}\exp(-\beta H(\bx))$, $\beta = 1/kT$, canonical ensemble assumption constant-Number Volume Temperature
+
+- multicanonical sampling (Beg and Neuhaus 1991) $U=H(\bx)\sim Z^{-1}\Omega(u)\exp(-\beta u)$, density of states (spectral density) $\Omega(u)$. draw $\bx'\sim\exp(-S(h(\bx)))$, $S(u)=\log\Omega(u)$, then $\pi'(u)\propto c$
+- $1/k$-ensemble sampling (Hesselbo and Stinchcombe 1995) $\pi^*(\bx)$ such that entropy $S=S(H(\bx))=\log(\Omega(H(\bx)))\propto c$, then $\pi_S^*(u)\propto \frac{d \log\Omega(u)}{du}$. $\pi^*(\bx)\propto 1/k(H(\bx))$, $k(H)=\int_{-\infty}^H\Omega(H')dH'$ number of configurations with smaller or equal energy, $P_{1/k}(u)\propto \frac{\Omega(u)}{k(u)}=\frac{d\log k(u)}{du}$
+
+adaptive direction sampling (ADS) (Gilks et al. 1994)
+
+- snooker algorithm $\mathcal{S}^{(t)}=\{\bx^{(t,1)},\dots,\bx^{(t,m)}\}$, draw a stream $\bx^{(t,c)}$ and anchor $\bx^{(t,a)}$, $\be=(\bx^{(t,c)}-\bx^{(t,c)})/\|\bx^{(t,c)}-\bx^{(t,a)}\|$, draw $r\sim f(r)$, update $\bx^{(t+1,c)}=\bx^{(t,a)}+r\be$ 
+
+conjugate gradient Monte Carlo (CGMC) draw $\bx^{(t,a)}\in\mathcal{S}^{(t)}$, find local mode or high density value point $\by$ of $\pi$ by gradient or conjugate gradient, choose $\bx^{(t,c)}\in\mathcal{S}^{(t)}\backslash\{\bx^{(t,a)}\}$, $\be=(\by-\bx^{(t,c)})/\|\by-\bx^{(t,c)}\|$, sample along $\bx^{(t+1,c)}=\by+r\be$ by MTM with $f(r)\propto|r|^{d-1}\pi(\by+r\be)$, update other member of $\mathcal{S}^{(t)}$
+
+evolutionary Monte Carlo (EMC)
+
+- target $\pi(\bx)\propto\exp(-H(\bx))$
+- Gibbs distribution $\pi_i(\bx_i)=Z_i(t_i)^{-1}\exp(-H(\bx_i)/t_i)$
+- target of augmented system $\pi(\bx)=Z(t)^{-1}\exp\left(-\sum_{l=1}^mH(\bx_i)/t_i\right)$
+- mutation. select $\bx_k$ and flip some random position to $\by_k$ with MH ratio $r_m=\exp(-(H(\by_k)-H(\bx_k))/t_k)$
+- crossover $(\bx_i,\bx_j)$ with MH ratio $r_c=\exp\left(-\frac{H(\by_i)-H(\bx_i)}{t_i}-\frac{H(\by_j)-H(\bx_j)}{t_j}\right)\frac{T(\mathbf{Y},\mathbf{X})}{T(\mathbf{X},\mathbf{Y})}$
+  - snooker crossover $f(r)\propto|r|^{d-1}\pi(\bx_j+r\be)$
+- exchange $(\bx_i,\bx_j)$ with MH ratio
 
 
+variation distance ($L^1$-distance) $\|P-Q\|_{\mbox{var}}=\sup\limits_{S\in\mathcal{X}}|P(S)-Q(S)|=\frac{1}{2}\sum\limits_{\bx\in\mathcal{X}}|P(\bx)-Q(\bx)|=\frac{1}{2}\|P-Q\|_{L^1}=\frac{1}{2}\int|p(\bx)-q(\bx)|d\bx$
 
+$\chi^2$-distance $\|P-Q\|^2_{\chi^2}=\Var_{P}\{Q(\bx)/P(\bx)\}=\sum\limits_{\bx\in\mathcal{X}}|Q(\bx)-P(\bx)|^2/P(\bx)$
 
+$Q(\bx,\by)=\pi(\bx)A(\bx,\by)=\pi(\by)A(\by,\bx)$, $1=\beta_1>\beta_2\ge \dots\ge\beta_{m-1}\ge -1$, $m=|\mathcal{X}|$. 
 
+Laplacian $L=I-A$ with $\lambda_i=1-\beta_i$, $\lambda_1=\inf\limits_{\Var(\phi)>0}\frac{\mathcal{E}(\phi,\phi)}{\Var(\phi)}$, quadratic form of Laplacian $\mathcal{E}(\phi,\phi)=\frac{1}{2}\sum\limits_{\bx,\by}[\phi(\bx)-\phi(\by)]^2Q(\bx,\by)$. 
 
+length of path $\gamma_{xy}$ $\|\gamma_{xy}\|=\sum\limits_{e\in\gamma_{xy}}Q(e)^{-1}$, $\kappa=\kappa(\Gamma)=\max\limits_e\sum\limits_{\gamma_{xy}\ni e}\|\gamma_{xy}\|\pi(\bx)\pi(\by)$. $K=\max\limits_eQ(e)^{-1}\sum\limits_{\gamma_{xy}\ni e}|\gamma_{xy}|\pi(\bx)\pi(\by)$.
+Poincar\'e inequality $\beta_1\le 1- \kappa^{-1}$ and $\beta_1\le 1- K^{-1}$ 
 
+$S\in\mathcal{X}$, $Q(S,S^c)=\sum\limits_{\bx\in S}\sum\limits_{\by\in S^c}Q(\bx,\by)$. the conductance of the chain $h=\min\limits_{S:\pi(S)\le 1/2} \frac{Q(S,S^c)}{\pi(S)}$. Cheeger's inequality $1-2h\le\beta_1\le 1-\frac{h^2}{2}$
 
+$\eta=\max\limits_eQ(e)^{-1}\sum\limits_{\gamma_{xy}\ni e}\pi(\bx)\pi(\by)$. $\beta_1\le 1- 1/8\eta^2$
+
+$h(\bx)\in L_0^2(\pi)$, forward operator $Fh(\bx)=\int h(\by)A(\bx,\by)d\by=\bbE\{h(\bx^{(1)})|\bx^{(0)}=\bx\}$, backward operator $Bh(\by)=\int h(\bx)\frac{A(\bx,\by)\pi(\bx)}{\pi(\by)}d\bx=\bbE\{h(\bx^{(0)})|\bx^{(1)}=\by\}$.
+
+$\|F\|=\max\limits_{\|h\|=1}\|Fh\|$, spectral radius $r_F=\lim\limits_{n\to\infty}\|F^n\|^{1/n}$. $\langle Fh,g\rangle =\langle h,Bg\rangle$. 
+
+$\bx^{(0)}\sim\pi$. $h,g\in L_0^2(\pi)$. $\Cov(h(\bx^{(n)}),h(\bx^{(0)}))=\Cov_{\pi}(F^kh(\bx),B^{n-k}h(\bx))$, $0\le k\le n$.
+
+reversible Markov chain, $F=B$. $\bx^{(0)}\sim\pi$. $h\in L_0^2(\pi)$. $\Cov(h(\bx^{(0)}),h(\bx^{(2m)}))=\bbE_{\pi}\{[F^mh(\bx)]^2\}=\bbE_{\pi}\{[B^mh(\bx)]^2\}= \Var(\bbE\{\dots\bbE\{\bbE\{h(\bx^{(0)})|\bx^{(1)}\}|\bx^{(2)}|\dots|\bx^{(m)}\})$. $|\Cov(h(\bx^{(0)}),h(\bx^{(2m+1)}))|\le \Cov(h(\bx^{(0)}),h(\bx^{(2m)}))$
+
+maximal correlation $\gamma=\sup\limits_{f\in L_x^2(\pi),g\in L_y^2(\pi)}\mbox{Corr}(f(\bx),g(\by))=\sup\limits_{\bbE\{h\}=0,\Var(h)=1}\Var(\bbE\{h(\bx)|\by\})$. $\|F^n\|=\|B^n\|=\gamma_n=\sup\limits_{f,g\in L^2(\pi)}\mbox{Corr}(f(\bx^{(0)}),g(\bx^{(n)}))$
+
+reversible Markov chain $\rho_n(h)=\mbox{Corr}(F^nh(\bx),h(\bx))$, $\lim\limits_{n\to\infty}|\rho_n(h)|^{1/n}=|\lambda_1|$
+
+irreducible aperiodic finite-state Markov chain $\bar{h}_m\to\bbE_{\pi}\{h\}$ a.s. $\sqrt{m} [\bar{h}_m-\bbE_{\pi}\{h\}]\to N(0,\sigma^2(h))$, $\sigma(h)^2=\sigma^2\left[1+2\sum\limits_{j=1}^{\infty}\rho_j\right]=2\tau_{\mbox{int}}(h)\sigma^2$, $\rho_j=\mbox{Corr}(h(\bx^{(1)}),h(\bx^{(j+1)}))$
