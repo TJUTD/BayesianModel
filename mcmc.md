@@ -16,6 +16,7 @@ $\pi(\mathbf{x}) = \frac{1}{Z}e^{-\frac{U(\mathbf{x})}{kT}}$
 
 2-*D* Ising model on a *N* × *N* lattice space
 ℒ = {(*i*,*j*), *i*, *j* = 1, …, *N*}
+
 *U*(**x**) =  − *J*∑<sub>*σ* ∼ *σ*′</sub>*x*<sub>*σ*</sub>*x*<sub>*σ*′</sub> + ∑<sub>*σ*</sub>*h*<sub>*σ*</sub>(*x*<sub>*σ*</sub>)
 
 -   configuration of the whole system **x**= { *x*<sub>*σ*</sub>:
@@ -100,23 +101,28 @@ chain-structure model
 -   hidden Markov model (HMM) when
     *x*<sub>*i*</sub> ∈ 𝒮 = {*s*<sub>1</sub>, …, *s*<sub>*k*</sub>}
 -   optimization by dynamic programming *O*(*d**k*<sup>2</sup>)
-    $$m_1(x)=\min\limits\_{s_i\in\mathcal{S}}h_1(s_i,x),\quad m_t(x)=\min\limits\_{s_i\in\mathcal{S}}\\m\_{t-1}(s_i)+h_t(s_i,x)\\,\quad x=s_1,\dots,s_k$$
-    $$\hat x_1=\arg\min\limits\_{s_i\in\mathcal{S}} m_d(s_i),\quad \hat x_t=\arg\min\limits\_{s_i\in\mathcal{S}}\\m\_{t}(s_i)+h\_{t+1}(s_i,\hat x\_{t+1})\\,\quad t=d-1,\dots,1
-    $$
+
+$$m_1(x)=\min\limits\_{s_i\in\mathcal{S}}h_1(s_i,x),\quad m_t(x)=\min\limits\_{s_i\in\mathcal{S}}\\m\_{t-1}(s_i)+h_t(s_i,x)\\,\quad x=s_1,\dots,s_k$$
+
+$$\hat x_1=\arg\min\limits\_{s_i\in\mathcal{S}} m_d(s_i),\quad \hat x_t=\arg\min\limits\_{s_i\in\mathcal{S}}\\m\_{t}(s_i)+h\_{t+1}(s_i,\hat x\_{t+1})\\,\quad t=d-1,\dots,1
+$$
+
 -   exact simulation
     -   partition function
         *Z* = ∑<sub>**x**</sub>exp (−*H*(**x**)) = ∑<sub>*x* ∈ 𝒮</sub>*V*<sub>*d*</sub>(*x*)
-        *V*<sub>1</sub>(*x*) = ∑<sub>*x*<sub>0</sub> ∈ 𝒮</sub>*e*<sup>−*h*<sub>1</sub>(*x*<sub>0</sub>,*x*)</sup>,  *V*<sub>*t*</sub>(*x*) = ∑<sub>*y* ∈ 𝒮</sub>*V*<sub>*t* − 1</sub>(*y*)*e*<sup>−*h*<sub>*t*</sub>(*y*,*x*)</sup>,  *t* = 2, …, *d*
-        $$x_d \sim V_d(x)/Z,\quad x_t \sim \frac{V\_{t}(x)e^{-h\_{t+1}(x,x\_{t+1})}}{\sum\_{y\in\mathcal{S}}V\_{t}(y)e^{-h\_{t+1}(y,x\_{t+1})}},\quad t=d-1,\dots,1$$
-    -   Ising model
-        *π*(**x**) = *Z*<sup>−1</sup>exp (*β*(*x*<sub>0</sub>*x*<sub>1</sub>+…+*x*<sub>*d* − 1</sub>*x*<sub>*d*</sub>)),  *x*<sub>*i*</sub> ∈ { − 1,  + 1}
-        *V*<sub>1</sub>(*x*) = *e*<sup>*β**x*</sup> + *e*<sup>−*β**x*</sup> = *e*<sup>*β*</sup> + *e*<sup>−*β*</sup>,  *V*<sub>*t*</sub>(*x*) = (*e*<sup>*β*</sup>+*e*<sup>−*β*</sup>)<sup>*t*</sup>,  *Z* = 2(*e*<sup>*β*</sup>+*e*<sup>−*β*</sup>)<sup>*d*</sup>
-    -   graphical model, peeling algorithm /
-        forward-summation-backward-sampling method
-        -   **x**<sub>*C*</sub> = {*x*<sub>*i*</sub>, *i* ∈ *C*}, clique
-            *C* ∈ 𝒞 ⊂ 2<sup>{1, …, *d*}</sup> (Lauritzen and
-            Spiegelhalter, 1998), connected
-            *C*<sub>*i*</sub> ∩ *C*<sub>*j*</sub> ≠ ∅
+
+*V*<sub>1</sub>(*x*) = ∑<sub>*x*<sub>0</sub> ∈ 𝒮</sub>*e*<sup>−*h*<sub>1</sub>(*x*<sub>0</sub>,*x*)</sup>,  *V*<sub>*t*</sub>(*x*) = ∑<sub>*y* ∈ 𝒮</sub>*V*<sub>*t* − 1</sub>(*y*)*e*<sup>−*h*<sub>*t*</sub>(*y*,*x*)</sup>,  *t* = 2, …, *d*
+
+$$x_d \sim V_d(x)/Z,\quad x_t \sim \frac{V\_{t}(x)e^{-h\_{t+1}(x,x\_{t+1})}}{\sum\_{y\in\mathcal{S}}V\_{t}(y)e^{-h\_{t+1}(y,x\_{t+1})}},\quad t=d-1,\dots,1$$
+
+    - Ising model $\pi(\bx) = Z^{-1}\exp(\beta(x_0x_1 + \dots + x_{d-1}x_d)), \quad x_i\in \{-1,+1\}$
+
+*V*<sub>1</sub>(*x*) = *e*<sup>*β**x*</sup> + *e*<sup>−*β**x*</sup> = *e*<sup>*β*</sup> + *e*<sup>−*β*</sup>,  *V*<sub>*t*</sub>(*x*) = (*e*<sup>*β*</sup>+*e*<sup>−*β*</sup>)<sup>*t*</sup>,  *Z* = 2(*e*<sup>*β*</sup>+*e*<sup>−*β*</sup>)<sup>*d*</sup>
+ - graphical model, peeling algorithm /
+forward-summation-backward-sampling method -
+**x**<sub>*C*</sub> = {*x*<sub>*i*</sub>, *i* ∈ *C*}, clique
+*C* ∈ 𝒞 ⊂ 2<sup>{1, …, *d*}</sup> (Lauritzen and Spiegelhalter, 1998),
+connected *C*<sub>*i*</sub> ∩ *C*<sub>*j*</sub> ≠ ∅
 
 ## importance sampling
 
@@ -133,20 +139,22 @@ chain-structure model
     direct sample
     $\bar{\mu}=n^{-1}\[h(y^{(1)})+\dots+h(y^{(n)})\]=\overline{H}$,
     *y*<sup>(*i*)</sup> ∼ *π*
-    $$\begin{aligned}
-    \mathrm{Var}\_g(\hat{\mu}) &=\mathrm{Var}\_g(\overline{Z}/\overline{W}) \approx \begin{bmatrix} \frac{1}{\mathbb{E}\_g\\W\\} & -\frac{\mathbb{E}\_g\\Z\\}{\mathbb{E}\_g^2\\W\\} \end{bmatrix} \frac{1}{n}\begin{bmatrix} \mathrm{Var}\_g(Z) & \mathrm{Cov}\_g(Z,W)\\ \mathrm{Cov}\_g(W,Z)   & \mathrm{Var}\_g(W)  \end{bmatrix} \begin{bmatrix} \frac{1}{\mathbb{E}\_g\\W\\} \\ -\frac{\mathbb{E}\_g\\Z\\}{\mathbb{E}\_g^2\\W\\} \end{bmatrix}\\
-      &= \frac{1}{n}\left\[ \frac{\mathrm{Var}\_g(Z)}{\mathbb{E}\_g^2\\W\\} - 2 \frac{\mathbb{E}\_g\\Z\\\mathrm{Cov}\_g(Z,W)}{\mathbb{E}\_g^3\\W\\}  +\frac{\mathbb{E}\_g^2\\Z\\\mathrm{Var}\_g(W)}{\mathbb{E}\_g^4\\W\\}\right\]\\
-      &= n^{-1}\[ \mathrm{Var}\_g(Z) - 2 \mu\mathrm{Cov}\_g(Z,W)  + \mu^2\mathrm{Var}\_g(W)\]\\
-      &= n^{-1}\[ (\mathbb{E}\_{\pi}\\WH^2\\-\mu) - 2 \mu(\mathbb{E}\_{\pi}\\WH\\ -\mu ) + \mu^2\mathrm{Var}\_g(W)\]\\ 
-      \mathbb{E}\_{\pi}\\WH^2\\&\approx \mathbb{E}\_{\pi}\\W\\\mathbb{E}\_{\pi}^2\\H\\ +\frac{1}{2} \mathrm{tr}\left(\begin{bmatrix} 0 & 2\mathbb{E}\_{\pi}\\H\\\\
-      2\mathbb{E}\_{\pi}\\H\\ & 2\mathbb{E}\_{\pi}\\W\\\end{bmatrix} \begin{bmatrix} \mathrm{Var}\_{\pi}(W) & \mathrm{Cov}\_{\pi}(W,H)\\ \mathrm{Cov}\_{\pi}(H,W) & \mathrm{Var}\_{\pi}(H)  \end{bmatrix}\right) \\
-      &= n^{-1}\[ (\mu^2\mathbb{E}\_{\pi}\\W\\ + 2\mu\mathrm{Cov}\_{\pi}(H,W) + \mathbb{E}\_{\pi}\\W\\\mathrm{Var}\_{\pi}(H)-\mu^2 )- 2 \mu(\mathrm{Cov}\_{\pi}(WH) + \mu\mathbb{E}\_{\pi}\\W\\ -\mu ) + \mu^2\mathrm{Var}\_{g}(W)\]\\
-      &= n^{-1}\[ \mathbb{E}\_{\pi}\\W\\\mathrm{Var}\_{\pi}(H) +\mu^2(1-\mathbb{E}\_{\pi}\\W\\+\mathrm{Var}\_{g}(W))\]\\
-      &= n^{-1}\[ \mathbb{E}\_{\pi}\\W\\\mathrm{Var}\_{\pi}(H) +\mu^2(1-\mathbb{E}\_{g}\\W^2\\+\mathrm{Var}\_{g}(W))\]\\
-      &= n^{-1} \mathbb{E}\_{\pi}\\W\\\mathrm{Var}\_{\pi}(H)\\
-      &=\frac{1+\mathrm{Var}\_g(W)}{n}\mathrm{Var}\_{\pi}(H)
-    \end{aligned}
-    $$
+
+$$\begin{aligned}
+  \mathrm{Var}\_g(\hat{\mu}) &=\mathrm{Var}\_g(\overline{Z}/\overline{W}) \approx \begin{bmatrix} \frac{1}{\mathbb{E}\_g\\W\\} & -\frac{\mathbb{E}\_g\\Z\\}{\mathbb{E}\_g^2\\W\\} \end{bmatrix} \frac{1}{n}\begin{bmatrix} \mathrm{Var}\_g(Z) & \mathrm{Cov}\_g(Z,W)\\ \mathrm{Cov}\_g(W,Z)   & \mathrm{Var}\_g(W)  \end{bmatrix} \begin{bmatrix} \frac{1}{\mathbb{E}\_g\\W\\} \\ -\frac{\mathbb{E}\_g\\Z\\}{\mathbb{E}\_g^2\\W\\} \end{bmatrix}\\
+    &= \frac{1}{n}\left\[ \frac{\mathrm{Var}\_g(Z)}{\mathbb{E}\_g^2\\W\\} - 2 \frac{\mathbb{E}\_g\\Z\\\mathrm{Cov}\_g(Z,W)}{\mathbb{E}\_g^3\\W\\}  +\frac{\mathbb{E}\_g^2\\Z\\\mathrm{Var}\_g(W)}{\mathbb{E}\_g^4\\W\\}\right\]\\
+    &= n^{-1}\[ \mathrm{Var}\_g(Z) - 2 \mu\mathrm{Cov}\_g(Z,W)  + \mu^2\mathrm{Var}\_g(W)\]\\
+    &= n^{-1}\[ (\mathbb{E}\_{\pi}\\WH^2\\-\mu) - 2 \mu(\mathbb{E}\_{\pi}\\WH\\ -\mu ) + \mu^2\mathrm{Var}\_g(W)\]\\ 
+    \mathbb{E}\_{\pi}\\WH^2\\&\approx \mathbb{E}\_{\pi}\\W\\\mathbb{E}\_{\pi}^2\\H\\ +\frac{1}{2} \mathrm{tr}\left(\begin{bmatrix} 0 & 2\mathbb{E}\_{\pi}\\H\\\\
+    2\mathbb{E}\_{\pi}\\H\\ & 2\mathbb{E}\_{\pi}\\W\\\end{bmatrix} \begin{bmatrix} \mathrm{Var}\_{\pi}(W) & \mathrm{Cov}\_{\pi}(W,H)\\ \mathrm{Cov}\_{\pi}(H,W) & \mathrm{Var}\_{\pi}(H)  \end{bmatrix}\right) \\
+    &= n^{-1}\[ (\mu^2\mathbb{E}\_{\pi}\\W\\ + 2\mu\mathrm{Cov}\_{\pi}(H,W) + \mathbb{E}\_{\pi}\\W\\\mathrm{Var}\_{\pi}(H)-\mu^2 )- 2 \mu(\mathrm{Cov}\_{\pi}(WH) + \mu\mathbb{E}\_{\pi}\\W\\ -\mu ) + \mu^2\mathrm{Var}\_{g}(W)\]\\
+    &= n^{-1}\[ \mathbb{E}\_{\pi}\\W\\\mathrm{Var}\_{\pi}(H) +\mu^2(1-\mathbb{E}\_{\pi}\\W\\+\mathrm{Var}\_{g}(W))\]\\
+    &= n^{-1}\[ \mathbb{E}\_{\pi}\\W\\\mathrm{Var}\_{\pi}(H) +\mu^2(1-\mathbb{E}\_{g}\\W^2\\+\mathrm{Var}\_{g}(W))\]\\
+    &= n^{-1} \mathbb{E}\_{\pi}\\W\\\mathrm{Var}\_{\pi}(H)\\
+    &=\frac{1+\mathrm{Var}\_g(W)}{n}\mathrm{Var}\_{\pi}(H)
+\end{aligned}
+$$
+
 -   proper w.r.t *π*:
     𝔼<sub>*g*</sub>{*h*(**x**<sup>(*i*)</sup>)*w*<sup>(*i*)</sup>} = *c*𝔼<sub>*π*</sub>{*h*(**x**)},
     for all square integrable *h*(⋅) ⇔
@@ -593,12 +601,14 @@ data augmentation draw
 *x*<sub>1</sub><sup>(*t*+1)</sup> ∼ *π*( ⋅ \|*x*<sub>2</sub><sup>(*t*)</sup>,
 *x*<sub>2</sub><sup>(*t*+1)</sup> ∼ *π*(⋅\|*x*<sub>1</sub><sup>(*t*+1)</sup>).
 *L*<sub>0</sub><sup>2</sup>(*π*) = {*h*(**x**) ∈ *L*<sup>2</sup>(*π*) : 𝔼{*h*(**x**) = 0}}
+
 $$\begin{aligned}
 \mathrm{Cov}(h(x_1^{(0)}),h(x_1^{(1)})) &= \mathrm{Var}\_{\pi}(\mathbb{E}\_{\pi}\\h(x_1)\|x_2\\) \\
 \mathrm{Cov}(h(x_1^{(0)}),h(x_1^{(n)})) &= \mathrm{Var}\_{\pi}(\mathbb{E}\_{\pi}\\\dots\mathbb{E}\_{\pi}\\\mathbb{E}\_{\pi}\\\mathbb{E}\_{\pi}\\h(x_1)\|x_2\\\|x_1\\\|x_2\\\dots\\) 
 \end{aligned}$$
 
 random-scan
+
 $$\begin{aligned}
 \mathrm{Cov}(h(\mathbf{x}^{(0)}),h(\mathbf{x}^{(1)})) &= \mathbb{E}\_{\pi}\\\mathbb{E}^2\_{\pi}\\h(\mathbf{x})\|i,\mathbf{x}\_{-i}\\\\ \\
 \mathrm{Cov}(h(\mathbf{x}^{(0)}),h(\mathbf{x}^{(n)})) &= \mathrm{Var}\_{\pi}(\mathbb{E}\_{\pi}\\\dots\mathbb{E}\_{\pi}\\\mathbb{E}\_{\pi}\\\mathbb{E}\_{\pi}\\h(\mathbf{x})\|i,\mathbf{x}\_{-i}\\\|\mathbf{x}\\\|i,x\_{-i}\\\dots\\)
@@ -637,8 +647,11 @@ do not introduce unnecessary components into a Gibbs sampler
 ∥*F*<sub>*c*</sub>∥ ≤ ∥*F*<sub>*g*</sub>∥ ≤ ∥*F*<sub>*s*</sub>∥
 
 Swendsen-Wang algorithm, data augmentation, Ising model
+
 *π*(**x**) ∝ exp (*β**J*∑<sub>*l* ∼ *l*′</sub>*x*<sub>*l*</sub>*x*<sub>*l*′</sub>) ∝ ∏<sub>*l* ∼ *l*′</sub>exp (*β**J*(1+*x*<sub>*l*</sub>*x*<sub>*l*′</sub>))
+
 *π*(**x**,**u**) ∝ ∏<sub>*l* ∼ *l*′</sub>*I*(0≤*u*<sub>*l*, *l*′</sub>≤exp(*β**J*(1+*x*<sub>*l*</sub>*x*<sub>*l*′</sub>)))
+
 *π*(**x**,**b**) ∝ ∏<sub>*l* ∼ *l*′</sub>(1+*b*<sub>*l*, *l*′</sub>(*e*<sup>2*β**J*</sup>−1))
 bonding variable
 *b*<sub>*l*, *l*′</sub> = *I*(*u*<sub>*l*, *l*′</sub>\>1),
