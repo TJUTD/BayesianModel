@@ -4,8 +4,8 @@ given *σ*<sup>2</sup>
 <!-- conditional prior $p(\theta|\sigma^2) = \mathrm{dnorm}(y,\mu_0,\tau_0)$ -->
 
 sampling model
-$$
-Y_1,\dots,Y_n\|\theta,\sigma^2 \overset{\mathrm i.i.d.}{\sim}\mathrm{normal}(\theta,\sigma^2)$$
+
+$$Y_1,\dots,Y_n\|\theta,\sigma^2 \overset{\mathrm i.i.d.}{\sim}\mathrm{normal}(\theta,\sigma^2)$$
 
 conditional prior
 *θ*\|*σ*<sup>2</sup> ∼ normal(*μ*<sub>0</sub>, *τ*<sub>0</sub><sup>2</sup>)
@@ -43,6 +43,7 @@ Y_1,\dots,Y_n\|\theta,\sigma^2 &\overset{\mathrm i.i.d.}{\sim}\mathrm{normal}(\t
 \end{aligned}$$
 
 posterior
+
 $$\begin{aligned}
 1/\sigma^2\|y_1,\dots,y_n &\sim \mathrm{gamma}(\frac{\nu_n^2}{2},\frac{\nu_n^2}{2}\sigma_n^2)\\
 \theta\|\sigma^2,y_1,\dots,y_n &\sim  \mathrm{normal}(\mu_n,\frac{\sigma^2}{{\kappa_n}})
@@ -124,8 +125,8 @@ Y_1,\dots,Y_n\|\theta,\sigma^2 &\overset{\mathrm i.i.d.}{\sim}\mathrm{normal}(\t
 \end{aligned}$$
 
 posterior
-$$
-\begin{aligned}
+
+$$\begin{aligned}
 \theta\|y_1,\dots,y_n &\sim  \mathrm{normal}(\mu_n,\tau_n^2)\\
 1/\sigma^2\|y_1,\dots,y_n &\sim \mbox{some distribution not standard}\\
 1/\sigma^2\|\theta,y_1,\dots,y_n &\sim \mathrm{gamma}(\frac{\nu_n^2}{2},\frac{\nu_n^2}{2}\sigma_n^2(\theta))
@@ -201,8 +202,8 @@ Gibbs sampler
 full conditional distribution
 *p*(*θ*\|*σ*<sup>2</sup>,*y*<sub>1</sub>,…,*y*<sub>*n*</sub>) and
 *p*(*σ*<sup>2</sup>\|*θ*,*y*<sub>1</sub>,…,*y*<sub>*n*</sub>)
-$$
-\begin{aligned}
+
+$$\begin{aligned}
 \theta\|\sigma^2,y_1,\dots,y_n \overset{\theta\perp\sigma}{=}\theta\|y_1,\dots,y_n &\sim  \mathrm{normal}(\mu_n,\tau_n^2) \\
 1/\sigma^2\|\theta,y_1,\dots,y_n &\sim \mathrm{gamma}(\frac{\nu_n^2}{2},\frac{\nu_n^2}{2}\sigma_n^2(\theta))
 \end{aligned}$$
@@ -285,6 +286,7 @@ $$
 ![](normal_model_files/figure-markdown_github/Gibbs-2.png)
 
 MCMC variance
+
 $$\begin{aligned}
 \mbox{Var}\_{\mbox{MCMC}}(\bar{\phi}) &= \mbox{Var}\_{\mbox{MC}}(\bar{\phi}) + \frac{1}{S^2}\mbox{E}\\(\phi^{(s)}-\phi_0)(\phi^{(t)}-\phi_0)\\ = \frac{\mbox{Var}({\phi})}{S\_{\mbox{eff}}}\\
 \mbox{Var}\_{\mbox{MC}}(\bar{\phi}) &= \frac{\mbox{Var}({\phi})}{S}\\
