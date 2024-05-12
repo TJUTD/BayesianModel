@@ -11,7 +11,7 @@ $\pi(\mathbf{x}) = \frac{1}{Z}e^{-\frac{U(\mathbf{x})}{kT}}$
     $\frac{\partial \log(Z)}{\partial \beta}= - \langle U\rangle$
 -   free energy *F* =  − *k**T*log (*Z*)
 -   specific heat of the system
-    $C = \frac{\partial \langle U\rangle}{\partial T}       =\frac{1}{kT^2}\mathrm{Var}\_{\pi}\\U(\mathbf{x})\\$
+    $C = \frac{\partial \langle U \rangle}{\partial T}       =\frac{1}{kT^2} \mathrm{Var}\_{\pi} \\U(\mathbf{x})\\$
 -   the system’s entropy *S* = (⟨*U*⟩−*F*)/*T*
 
 2-*D* Ising model on a *N* × *N* lattice space
