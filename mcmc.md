@@ -102,9 +102,9 @@ chain-structure model
     *x*<sub>*i*</sub> ∈ 𝒮 = {*s*<sub>1</sub>, …, *s*<sub>*k*</sub>}
 -   optimization by dynamic programming *O*(*dk*<sup>2</sup>)
 
-$$m_1(x)=\min\limits\_{s_i\in\mathcal{S}}h_1(s_i,x),\quad m_t(x)=\min\limits\_{s_i\in\mathcal{S}}\\m\_{t-1}(s_i)+h_t(s_i,x)\\,\quad x=s_1,\dots,s_k$$
+$$m_1(x)= \min\limits\_{s_i\in\mathcal{S}} h_1(s_i,x),\quad m_t(x)=\min\limits\_{s_i\in\mathcal{S}} \{ m\_{t-1}(s_i)+h_t(s_i,x) \},\quad x=s_1,\dots,s_k$$
 
-$$\hat x_1=\arg\min\limits\_{s_i\in\mathcal{S}} m_d(s_i),\quad \hat x_t=\arg\min\limits\_{s_i\in\mathcal{S}} { m\_{t}(s_i)+h\_{t+1}(s_i,\hat x\_{t+1}) },\quad t=d-1,\dots,1
+$$\hat x_1=\arg\min\limits\_{s_i\in\mathcal{S}} m_d(s_i),\quad \hat x_t=\arg\min\limits\_{s_i\in\mathcal{S}} \{ m\_{t}(s_i)+h\_{t+1}(s_i,\hat x\_{t+1}) \},\quad t=d-1,\dots,1
 $$
 
 -   exact simulation
