@@ -351,9 +351,9 @@ $$\begin{aligned}
     *y*<sub>*i*</sub> ∈ \[*ξ*<sub>0</sub>,*ξ*<sub>*K*</sub>\]
 
 $$\begin{aligned}
-f(y) &= \sum\_{k=1}^K I(\xi\_{k-1}\<y\le\xi_k) \frac{\pi_k}{\xi_k-\xi\_{k-1}} \\
-\mbox{prior } p(\pi\|a) &= \frac{\Gamma(\sum\_{k=1}^Ka_k)}{\prod\_{k=1}^K\Gamma(a_k)}\prod\_{k=1}^K \pi_k^{a_k-1}\\
-\mbox{posterior } \pi\|y &\sim \mbox{Dirichlet}(a_1+n_1,\dots,a_K+n_K),\quad n_k=\sum_iI(\xi\_{k-1}\<y_i\le \xi_k)
+f(y) &= \sum\_{k=1}^K I(\xi\_{k-1} \< y \le \xi_k) \frac{\pi_k}{\xi_k - \xi\_{k-1}} \\
+\mbox{prior } p(\pi \| a) &= \frac{\Gamma(\sum\_{k=1}^K a_k)}{\prod\_{k=1}^K \Gamma(a_k)} \prod\_{k=1}^K \pi_k^{a_k-1}\\
+\mbox{posterior } \pi \| y &\sim \mbox{Dirichlet}(a_1+n_1,\dots,a_K+n_K),\quad n_k= \sum_i  I(\xi\_{k-1} \< y_i \le \xi_k)
 \end{aligned}$$
 
 -   a random probability measure *P* over (*Ω*,ℬ) assigned a Dirichlet
@@ -364,7 +364,9 @@ f(y) &= \sum\_{k=1}^K I(\xi\_{k-1}\<y\le\xi_k) \frac{\pi_k}{\xi_k-\xi\_{k-1}} \\
 (*P*(*B*<sub>1</sub>),…,*P*(*B*<sub>*K*</sub>)) ∼ Dirichlet(*α**P*<sub>0</sub>(*B*<sub>1</sub>),…,*α**P*<sub>0</sub>(*B*<sub>*K*</sub>))
  - (direct representation) stick-breaking construction
 
-$$P(\cdot) = \sum\_{k=1}^{\infty} \pi_k \delta\_{\theta_k}(\cdot),\quad \pi_k=V_k\prod\_{l\<k}(1-V_l), \quad V_k\sim \mbox{Beta}(1,\alpha),\quad \theta_k\sim P_0$$
+$P(\cdot) = \sum\_{k=1}^{\infty} \pi_k \delta\_{\theta_k}(\cdot)$,
+*π*<sub>*k*</sub> = *V*<sub>*k*</sub>∏<sub>*l* \< *k*</sub>(1−*V*<sub>*l*</sub>),
+*V*<sub>*k*</sub> ∼ Beta(1,*α*), *θ*<sub>*k*</sub> ∼ *P*<sub>0</sub>
 
 $$\begin{aligned}
 \mbox{observation model } y_i &\overset{i.i.d.}{\sim} P \\
