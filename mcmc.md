@@ -117,7 +117,7 @@ $$x_d \sim V_d(x)/Z,\quad x_t \sim \frac{V\_{t}(x)e^{-h\_{t+1}(x,x\_{t+1})}}{\su
 
     - Ising model 
     
-$$\pi(\bx) = Z^{-1} \exp( \beta (x_{0} x_{1} + \dots + x_{d-1} x_{d} )),\quad x_i \in \{ -1, +1 \}$$
+$$\pi(\mathbf{x}) = Z^{-1} \exp( \beta (x_{0} x_{1} + \dots + x_{d-1} x_{d} )),\quad x_i \in \{ -1, +1 \}$$
 
 *V*<sub>1</sub>(*x*) = *e*<sup>*βx*</sup> + *e*<sup>−*βx*</sup> = *e*<sup>*β*</sup> + *e*<sup>−*β*</sup>,  *V*<sub>*t*</sub>(*x*) = (*e*<sup>*β*</sup>+*e*<sup>−*β*</sup>)<sup>*t*</sup>,  *Z* = 2(*e*<sup>*β*</sup>+*e*<sup>−*β*</sup>)<sup>*d*</sup>
  - graphical model, peeling algorithm /
