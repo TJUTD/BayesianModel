@@ -11,7 +11,7 @@ $\pi(\mathbf{x}) = \frac{1}{Z}e^{-\frac{U(\mathbf{x})}{kT}}$
     $\frac{\partial \log(Z)}{\partial \beta}= - \langle U\rangle$
 -   free energy *F* =  − *k**T*log (*Z*)
 -   specific heat of the system
-    $C = \frac{\partial \langle U \rangle}{\partial T}       =\frac{1}{kT^2} \mathrm{Var}\_{\pi} \\U(\mathbf{x})\\$
+    $C = \frac{\partial \langle U \rangle}{\partial T}       =\frac{1}{kT^2} \mathrm{Var}\_{\pi} \\ U(\mathbf{x}) \\$
 -   the system’s entropy *S* = (⟨*U*⟩−*F*)/*T*
 
 2-*D* Ising model on a *N* × *N* lattice space
@@ -27,7 +27,7 @@ $\pi(\mathbf{x}) = \frac{1}{Z}e^{-\frac{U(\mathbf{x})}{kT}}$
 -   interaction strength *J*
 -   external magnetic field *h*<sub>*σ*</sub>
 -   mean magnetization per spin
-    $\langle m\rangle = \mathbb{E}\_{\pi}\\\frac{1}{N^2}\left\|\sum\_{\sigma\in S}x\_{\sigma}\right\|\\$
+    $\langle m \rangle = \mathbb{E}\_{\pi} \\ \frac{1}{N^2} \left\| \sum\_{\sigma\in S} x\_{\sigma} \right\| \\$
 
 Potts model *x*<sub>*l*</sub> ∈ {1, 2, …, *q*},
 *H*(**x**) =  − *J*∑<sub>*i* ∼ *j*</sub>*δ*<sub>*x*<sub>*i*</sub>*x*<sub>*j*</sub></sub> − ∑<sub>*j*</sub>*h*<sub>*j*</sub>(*x*<sub>*j*</sub>)
