@@ -1,6 +1,6 @@
 # importance sampling
 
-$$\mathrm{E} \{ h(\theta\|y) \} = \frac{\int \[h(\theta)q(\theta\|y)/g(\theta)\]g(\theta)d\theta}{\int \[q(\theta\|y)/g(\theta)\]g(\theta)d\theta} \Longrightarrow \frac{S^{-1}\sum\_{s=1}^S h(\theta^s) w(\theta^s) }{S^{-1}\sum\_{s=1}^S w(\theta^s) }, w(\theta^s) = \frac{q(\theta^s\|y)}{g(\theta^s)}$$
+$$\mathrm{E} \{ h(\theta\|y) \} = \frac{\int \[h(\theta)q(\theta\|y)/g(\theta)\]g(\theta)d\theta}{\int \[q(\theta\|y)/g(\theta)\]g(\theta)d\theta} \Longrightarrow \frac{S^{-1}\sum\limits_{s=1}^S h(\theta^s) w(\theta^s) }{S^{-1}\sum\limits_{s=1}^S w(\theta^s) }, w(\theta^s) = \frac{q(\theta^s\|y)}{g(\theta^s)}$$
 
 effective sample size
 $$S\_{\mbox{eff}} = \frac{1}{\sum\_{s=1}^S (\hat{w}(\theta^s))^2 }$$
@@ -13,7 +13,7 @@ sampling-importance resampling (SIR)
     {*θ*<sup>1</sup>, …, *θ*<sup>*S*</sup>} with probability
     proportional to $w(\theta^s) = \frac{q(\theta^s\|y)}{g(\theta^s)}$
 
-target $0.7(5,3) + 0.3(6,10)
+target 0.7(5,3) + 0.3(6,10)
 
 envelope U(0,1)
 
