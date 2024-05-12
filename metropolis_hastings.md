@@ -1,8 +1,7 @@
 # importance sampling
 
-$$
-\mathrm{E}\\h(\theta\|y)\\ = \frac{\int \[h(\theta)q(\theta\|y)/g(\theta)\]g(\theta)d\theta}{\int \[q(\theta\|y)/g(\theta)\]g(\theta)d\theta} \Longrightarrow \frac{S^{-1}\sum\_{s=1}^S h(\theta^s) w(\theta^s) }{S^{-1}\sum\_{s=1}^S w(\theta^s) }, w(\theta^s) = \frac{q(\theta^s\|y)}{g(\theta^s)}
-$$
+$$\mathrm{E} \{ h(\theta\|y) \} = \frac{\int \[h(\theta)q(\theta\|y)/g(\theta)\]g(\theta)d\theta}{\int \[q(\theta\|y)/g(\theta)\]g(\theta)d\theta} \Longrightarrow \frac{S^{-1}\sum\_{s=1}^S h(\theta^s) w(\theta^s) }{S^{-1}\sum\_{s=1}^S w(\theta^s) }, w(\theta^s) = \frac{q(\theta^s\|y)}{g(\theta^s)}$$
+
 effective sample size
 $$S\_{\mbox{eff}} = \frac{1}{\sum\_{s=1}^S (\hat{w}(\theta^s))^2 }$$
 
