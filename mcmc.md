@@ -104,7 +104,7 @@ chain-structure model
 
 $$m_1(x)=\min\limits\_{s_i\in\mathcal{S}}h_1(s_i,x),\quad m_t(x)=\min\limits\_{s_i\in\mathcal{S}}\\m\_{t-1}(s_i)+h_t(s_i,x)\\,\quad x=s_1,\dots,s_k$$
 
-$$\hat x_1=\arg\min\limits\_{s_i\in\mathcal{S}} m_d(s_i),\quad \hat x_t=\arg\min\limits\_{s_i\in\mathcal{S}}\\m\_{t}(s_i)+h\_{t+1}(s_i,\hat x\_{t+1})\\,\quad t=d-1,\dots,1
+$$\hat x_1=\arg\min\limits\_{s_i\in\mathcal{S}} m_d(s_i),\quad \hat x_t=\arg\min\limits\_{s_i\in\mathcal{S}} { m\_{t}(s_i)+h\_{t+1}(s_i,\hat x\_{t+1}) },\quad t=d-1,\dots,1
 $$
 
 -   exact simulation
@@ -115,7 +115,7 @@ $$
 
 $$x_d \sim V_d(x)/Z,\quad x_t \sim \frac{V\_{t}(x)e^{-h\_{t+1}(x,x\_{t+1})}}{\sum\_{y\in\mathcal{S}}V\_{t}(y)e^{-h\_{t+1}(y,x\_{t+1})}},\quad t=d-1,\dots,1$$
 
-    - Ising model $\pi(\bx) = Z^{-1}\exp(\beta(x_0x_1 + \dots + x_{d-1}x_d)), \quad x_i\in \{-1,+1\}$
+    - Ising model $\pi(\bx) = Z^{-1} \exp(\beta(x_0 x_1 + \dots + x_{d-1} x_d)), \quad x_i \in \{ -1, +1 \}$
 
 *V*<sub>1</sub>(*x*) = *e*<sup>*βx*</sup> + *e*<sup>−*βx*</sup> = *e*<sup>*β*</sup> + *e*<sup>−*β*</sup>,  *V*<sub>*t*</sub>(*x*) = (*e*<sup>*β*</sup>+*e*<sup>−*β*</sup>)<sup>*t*</sup>,  *Z* = 2(*e*<sup>*β*</sup>+*e*<sup>−*β*</sup>)<sup>*d*</sup>
  - graphical model, peeling algorithm /
