@@ -27,7 +27,7 @@ $\pi(\mathbf{x}) = \frac{1}{Z}e^{-\frac{U(\mathbf{x})}{kT}}$
 -   interaction strength *J*
 -   external magnetic field *h*<sub>*σ*</sub>
 -   mean magnetization per spin
-    $\langle m \rangle = \mathbb{E}\_{\pi} \\ \frac{1}{N^2} \left\| \sum\_{\sigma\in S} x\_{\sigma} \right\| \\$
+    $\langle m \rangle = \mathbb{E}\_{\pi} { \frac{1}{N^2} \left\| \sum\_{\sigma\in S} x\_{\sigma} \right\| }$
 
 Potts model *x*<sub>*l*</sub> ∈ {1, 2, …, *q*},
 *H*(**x**) =  − *J*∑<sub>*i* ∼ *j*</sub>*δ*<sub>*x*<sub>*i*</sub>*x*<sub>*j*</sub></sub> − ∑<sub>*j*</sub>*h*<sub>*j*</sub>(*x*<sub>*j*</sub>)
