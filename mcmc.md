@@ -46,7 +46,7 @@ simple liquid model
 macromolecules model
 
 -   energy
-    $U(\mathbf{x}) = \sum\_{\mbox{bonds}}\\\mbox{bond terms}\\ + \sum\_{i,j}\left\[\Phi(r\_{ij}) + \frac{q_iq_j}{4\pi\epsilon_0r\_{ij}}\right\]$
+    $U(\mathbf{x}) = \sum\_{\mbox{bonds}}{ \mbox{bond terms} } + \sum\_{i,j}\left\[\Phi(r\_{ij}) + \frac{q_iq_j}{4\pi\epsilon_0r\_{ij}}\right\]$
 -   bond terms
     $=\sum\_{\mbox{bonds}} \frac{k_i}{2}(l_i-l\_{i,0})^2 + \sum\_{\mbox{angles}} \frac{k_i}{2}(\theta_i-\theta\_{i,0})^2 + \sum\_{\mbox{torsions}} v(\omega_i)$
 -   bond length *l*<sub>*i*</sub>, bond angle *θ*<sub>*i*</sub>, torsion
