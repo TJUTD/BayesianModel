@@ -2,9 +2,12 @@
 
 *p*(*θ*\|*y*) ∈ 𝒫 for all *p*(⋅\|*θ*) ∈ ℱ and *p*(⋅) ∈ 𝒫
 exponential family sampling distribution ℱ
+
 $$p(y_l\|\theta) = f(y_l) g(\theta) e^{\phi(\theta)^Tu(y_l)} \qquad p(y\|\theta) \propto \[g(\theta)\]^n e^{\phi(\theta)^Tt(y)},\mbox{ where } t(y) = \sum\limits\_{l=1}^n u(y_l)$$
 conjugacy
+
 *p*(*θ*) ∝ \[*g*(*θ*)\]<sup>*η*</sup>*e*<sup>*ϕ*(*θ*)<sup>*T*</sup>*ν*</sup>   *p*(*θ*\|*y*) ∝ \[*g*(*θ*)\]<sup>*η* + *n*</sup>*e*<sup>*ϕ*(*θ*)<sup>*T*</sup>\[*ν*+*t*(*y*)\]</sup>
+
 $$\begin{aligned}
 y_l\|\theta &\sim \mathrm{Binomial}(n,\theta)\\
 \theta&\sim\mathrm{Beta}(\alpha,\beta)\\
@@ -20,6 +23,7 @@ y&\sim\mathrm{NegBin}(\alpha,\beta)\\
 \end{aligned}$$
 
 exposure *x*<sub>*i*</sub>
+
 $$\begin{aligned}
 y_l\|\theta &\sim \mathrm{Poisson}(x_l\theta)\\
 \theta&\sim\mathrm{Gamma}(\alpha,\beta)\\
@@ -175,14 +179,12 @@ $$\begin{aligned}
 $$
 
 Akaike information criterion (AIC)
-
 $$\begin{aligned}
 \widehat{\mathrm{elpd}}\_{\mathrm{AIC}} &= \log p(y\|\hat{\theta}\_{\mathrm{mle}}) - k \\
 \mathrm{AIC} &= -2\log p(y\|\hat{\theta}\_{\mathrm{mle}}) + 2k 
 \end{aligned}$$
 
 Deviance information criterion (DIC)
-
 $$\begin{aligned}
 \widehat{\mathrm{elpd}}\_{\mathrm{DIC}} &= \log p(y\|\hat{\theta}\_{\mathrm{Bayes}}) - p\_{\mathrm{DIC}} \\
 p\_{\mathrm{DIC}} &= 2 \Bigg(\log p(y\|\hat{\theta}\_{\mathrm{Bayes}}) - \mathrm{E}\_{\mathrm{post}}(\log p(y\|\theta))\Bigg) \\
@@ -192,7 +194,6 @@ p\_{\mathrm{DIC}\_\mathrm{alt}} &= 2 \mathrm{var}\_{\mathrm{post}}(\log p(y\|\th
 \end{aligned}$$
 
 Watanabe-Akaike or widely applicable information criterion (WAIC)
-
 $$\begin{aligned}
 p\_{\mathrm{WAIC}\_1} &= 2 \sum\_{i=1}^n \Bigg(\log (\mathrm{E}\_{\mathrm{post}} p(y_i\|\theta)) - \mathrm{E}\_{\mathrm{post}}(\log p(y_i\|\theta)) \Bigg) \\
 \mbox{computed } p\_{\mathrm{WAIC}\_1} &= 2 \sum\_{i=1}^n  \Bigg(\log \Bigg(\frac{1}{S} \sum\_{s=1}^S \log p(y_i\|\theta^s) \Bigg) - \frac{1}{S} \sum\_{s=1}^S \log p(y_i\|\theta^s) \Bigg) \\
@@ -257,7 +258,6 @@ propensity score *P*(*I*<sub>*i*</sub>\|*X*) = *π*<sub>*i*</sub>
 
 parameter estimate *θ̂*<sub>*k*</sub> and associated variance estimate
 *Ŵ*<sub>*k*</sub> from *K* imputed data sets
-
 $$\begin{aligned}
 &\mbox{combined estimate } \bar{\theta}\_K = \frac{1}{K}\sum\_{k=1}^K \hat{\theta}\_k \\
 &\mbox{total variance associated with } T_K = W_K + \frac{K+1}{K} B_K\\
@@ -269,7 +269,6 @@ $$\begin{aligned}
 # linear regression
 
 semiconjugate prior distribution
-
 $$
 \begin{aligned}
 y\|X,\beta,\sigma^2 &\sim \mbox{normal}(X\beta,\sigma^2) \propto \exp(-\mbox{SSR}(\beta)/(2\sigma^2))  \\
@@ -279,7 +278,6 @@ y\|X,\beta,\sigma^2 &\sim \mbox{normal}(X\beta,\sigma^2) \propto \exp(-\mbox{SSR
 \mathbf{V} =\mbox{Var}(\beta\|y,X,\sigma^2) &= (\Sigma_0^{-1} + X^TX/\sigma^2)^{-1}
 \end{aligned}
 $$
-
 $$\begin{aligned}
 \gamma = 1/\sigma^2 &\sim \mbox{gamma}(\nu_0/2, \nu_0\sigma_0^2/2)\\
 \gamma\|y,X,\beta &\sim \mbox{gamma}((\nu_0+n)/2, \[\nu_0\sigma_0^2+\mbox{SSR}(\beta)\]/2)\\
@@ -313,7 +311,6 @@ $$\begin{aligned}
     *k*(*x*,*x*′) = *τ*<sup>2</sup>exp (−\|*x*−*x*′\|<sup>2</sup>/(2*l*<sup>2</sup>))
 
 -   observe (*x*<sub>*i*</sub>,*y*<sub>*i*</sub>) and predict *μ*(*x̃*)
- 
     $$\begin{aligned}
     \mbox{observation model } y_i &\sim N(\mu_i, \sigma^2) \\
     \mbox{prior } \mu&\sim\mbox{GP(0,k)}\\
@@ -326,7 +323,6 @@ $$\begin{aligned}
 -   a connection to basis expansion
     $\mu(x) = \sum\_{h=1}^H \beta_h b_h(x)$,
     *β* = (*β*<sub>1</sub>,…,*β*<sub>*H*</sub>) ∼ *N*<sub>*H*</sub>(*β*<sub>0</sub>,*Σ*<sub>*β*</sub>)
-    
     $$\begin{aligned}
     (\mu(x_1),\dots,\mu(x_n)) &\sim N_n((m(x_1),\dots,m(x_n)), K(x_1,\dots,x_n))\\
     \mbox{mean function } m(x) &= b(x)^T\beta_0\\
@@ -339,7 +335,6 @@ $$\begin{aligned}
     prespecified knots *ξ* = (*ξ*<sub>0</sub>,…,*ξ*<sub>*K*</sub>),
     *ξ*<sub>0</sub> \< *ξ*<sub>1</sub> \< … \< *ξ*<sub>*K*</sub>,
     *y*<sub>*i*</sub> ∈ \[*ξ*<sub>0</sub>,*ξ*<sub>*K*</sub>\]
-    
     $$\begin{aligned}
     f(y) &= \sum\_{k=1}^K I(\xi\_{k-1}\<y\le\xi_k) \frac{\pi_k}{\xi_k-\xi\_{k-1}} \\
     \mbox{prior } p(\pi\|a) &= \frac{\Gamma(\sum\_{k=1}^Ka_k)}{\prod\_{k=1}^K\Gamma(a_k)}\prod\_{k=1}^K \pi_k^{a_k-1}\\
@@ -353,9 +348,7 @@ $$\begin{aligned}
         *B*<sub>1</sub>, …, *B*<sub>*K*</sub> partitioning *Ω*,
         (*P*(*B*<sub>1</sub>),…,*P*(*B*<sub>*K*</sub>)) ∼ Dirichlet(*α**P*<sub>0</sub>(*B*<sub>1</sub>),…,*α**P*<sub>0</sub>(*B*<sub>*K*</sub>))
     -   (direct representation) stick-breaking construction
-    
         $$P(\cdot) = \sum\_{k=1}^{\infty} \pi_k \delta\_{\theta_k}(\cdot),\quad \pi_k=V_k\prod\_{l\<k}(1-V_l), \quad V_k\sim \mbox{Beta}(1,\alpha),\quad \theta_k\sim P_0$$
-        
         $$\begin{aligned}
         \mbox{observation model } y_i &\overset{i.i.d.}{\sim} P \\
         \mbox{prior } P &\sim \mbox{DP}(\alpha P_0)\\
@@ -370,7 +363,6 @@ $$\begin{aligned}
 -   DP mixture model
     $f(y) = \sum\_{k=1}^{\infty} \pi_k \mathcal{K}(y\|\theta_k^\*)$ with
     *π* ∼ DP(*α**P*<sub>0</sub>)
-
     $$\begin{aligned}
     y_i &\sim \mathcal{K}(\theta_i)\\
     \theta_i &\sim P\\
