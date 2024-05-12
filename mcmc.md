@@ -57,7 +57,7 @@ macromolecules model
 
 stratified sampling
 
--   estimand ∫<sub>𝒳</sub>*f*(*x*)*d**x*
+-   estimand ∫<sub>𝒳</sub>*f*(*x*)*dx*
 -   partition *D*<sub>1</sub>, …, *D*<sub>*k*</sub> of 𝒳
 -   *μ̂* = *μ̂*<sub>1</sub> + … + *μ̂*<sub>*k*</sub>,
     *μ̂*<sub>*i*</sub> = *m*<sub>*i*</sub><sup>−1</sup>\[*f*(*X*<sub>*i*, 1</sub>)+…+*f*(*X*<sub>*i*, *m*<sub>*i*</sub></sub>)\]
@@ -70,9 +70,9 @@ control variates method
     -   sample *X*(*b*) = *X* + *b*(*C*−*μ*<sub>*C*</sub>)
     -   Var(*X*(*b*)) = Var(*X*) + 2*b*Cov(*X*,*C*) + *b*<sup>2</sup>Var(*C*)
     -   set *b* = Cov(*X*,*C*)/Var(*C*),
-        Var(*X*(*b*)) = (1−*ρ*<sub>*X**C*</sub><sup>2</sup>)Var(*X*)
+        Var(*X*(*b*)) = (1−*ρ*<sub>*XC*</sub><sup>2</sup>)Var(*X*)
 -   control variate *C* with unknown 𝔼{*C*} = *μ*
-    -   sample *X*(*b*) = *b**X* + (1−*b*)*C*
+    -   sample *X*(*b*) = *bX* + (1−*b*)*C*
     -   Var(*X*(*b*)) = *b*<sup>2</sup>Var(*X*) + 2*b*(1−*b*)Cov(*X*,*C*) + (1−*b*)<sup>2</sup>Var(*C*)
     -   *b* = \[Var(*C*)−Cov(*X*,*C*)\]/\[Var(*X*)−2Cov(*X*,*C*)+Var(*C*)\]
 
@@ -100,7 +100,7 @@ chain-structure model
     *π*(*x*<sub>*i*</sub>\|**x**<sub>−*i*</sub>) ∝ exp (−*h*<sub>*i*</sub>(*x*<sub>*i* − 1</sub>,*x*<sub>*i*</sub>)−*h*<sub>*i* + 1</sub>(*x*<sub>*i*</sub>,*x*<sub>*i* + 1</sub>))
 -   hidden Markov model (HMM) when
     *x*<sub>*i*</sub> ∈ 𝒮 = {*s*<sub>1</sub>, …, *s*<sub>*k*</sub>}
--   optimization by dynamic programming *O*(*d**k*<sup>2</sup>)
+-   optimization by dynamic programming *O*(*dk*<sup>2</sup>)
 
 $$m_1(x)=\min\limits\_{s_i\in\mathcal{S}}h_1(s_i,x),\quad m_t(x)=\min\limits\_{s_i\in\mathcal{S}}\\m\_{t-1}(s_i)+h_t(s_i,x)\\,\quad x=s_1,\dots,s_k$$
 
@@ -117,7 +117,7 @@ $$x_d \sim V_d(x)/Z,\quad x_t \sim \frac{V\_{t}(x)e^{-h\_{t+1}(x,x\_{t+1})}}{\su
 
     - Ising model $\pi(\bx) = Z^{-1}\exp(\beta(x_0x_1 + \dots + x_{d-1}x_d)), \quad x_i\in \{-1,+1\}$
 
-*V*<sub>1</sub>(*x*) = *e*<sup>*β**x*</sup> + *e*<sup>−*β**x*</sup> = *e*<sup>*β*</sup> + *e*<sup>−*β*</sup>,  *V*<sub>*t*</sub>(*x*) = (*e*<sup>*β*</sup>+*e*<sup>−*β*</sup>)<sup>*t*</sup>,  *Z* = 2(*e*<sup>*β*</sup>+*e*<sup>−*β*</sup>)<sup>*d*</sup>
+*V*<sub>1</sub>(*x*) = *e*<sup>*βx*</sup> + *e*<sup>−*βx*</sup> = *e*<sup>*β*</sup> + *e*<sup>−*β*</sup>,  *V*<sub>*t*</sub>(*x*) = (*e*<sup>*β*</sup>+*e*<sup>−*β*</sup>)<sup>*t*</sup>,  *Z* = 2(*e*<sup>*β*</sup>+*e*<sup>−*β*</sup>)<sup>*d*</sup>
  - graphical model, peeling algorithm /
 forward-summation-backward-sampling method -
 **x**<sub>*C*</sub> = {*x*<sub>*i*</sub>, *i* ∈ *C*}, clique
