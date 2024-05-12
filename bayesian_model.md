@@ -179,12 +179,14 @@ $$\begin{aligned}
 $$
 
 Akaike information criterion (AIC)
+
 $$\begin{aligned}
 \widehat{\mathrm{elpd}}\_{\mathrm{AIC}} &= \log p(y\|\hat{\theta}\_{\mathrm{mle}}) - k \\
 \mathrm{AIC} &= -2\log p(y\|\hat{\theta}\_{\mathrm{mle}}) + 2k 
 \end{aligned}$$
 
 Deviance information criterion (DIC)
+
 $$\begin{aligned}
 \widehat{\mathrm{elpd}}\_{\mathrm{DIC}} &= \log p(y\|\hat{\theta}\_{\mathrm{Bayes}}) - p\_{\mathrm{DIC}} \\
 p\_{\mathrm{DIC}} &= 2 \Bigg(\log p(y\|\hat{\theta}\_{\mathrm{Bayes}}) - \mathrm{E}\_{\mathrm{post}}(\log p(y\|\theta))\Bigg) \\
@@ -194,6 +196,7 @@ p\_{\mathrm{DIC}\_\mathrm{alt}} &= 2 \mathrm{var}\_{\mathrm{post}}(\log p(y\|\th
 \end{aligned}$$
 
 Watanabe-Akaike or widely applicable information criterion (WAIC)
+
 $$\begin{aligned}
 p\_{\mathrm{WAIC}\_1} &= 2 \sum\_{i=1}^n \Bigg(\log (\mathrm{E}\_{\mathrm{post}} p(y_i\|\theta)) - \mathrm{E}\_{\mathrm{post}}(\log p(y_i\|\theta)) \Bigg) \\
 \mbox{computed } p\_{\mathrm{WAIC}\_1} &= 2 \sum\_{i=1}^n  \Bigg(\log \Bigg(\frac{1}{S} \sum\_{s=1}^S \log p(y_i\|\theta^s) \Bigg) - \frac{1}{S} \sum\_{s=1}^S \log p(y_i\|\theta^s) \Bigg) \\
@@ -204,9 +207,11 @@ p\_{\mathrm{WAIC}\_2} &= \sum\_{i=1}^n \mathrm{var}\_{\mathrm{post}}(\log p(y_i\
 \end{aligned}$$
 
 \`Bayesian’ information criterion (BIC)
+
 BIC =  − 2log *p*(*y*\|*θ̂*) + *k*log *n*
 
 Leave-one-out cross-validation
+
 $$\begin{aligned}
 \mbox{lppd}\_{\mbox{loo-cv}} &= \sum\_{i=1}^n \log p\_{\mbox{post}(-i)}(y_i) \quad\mbox{Bayesian LOO-CV estimate of out of sample predictive fit}\\
 b &= \mbox{lppd} - \overline{\mbox{lppd}}\_{-i} \quad\mbox{first order bias correction}\\
@@ -218,9 +223,11 @@ p\_{\mbox{cloo-cv}} &= \mbox{lppd} - \mbox{lppd}\_{\mbox{cloo-cv}} = \overline{\
 # missing data
 
 sampling model and missing-data model
+
 *p*(*y*<sub>obs</sub>,*I*\|*x*,*θ*,*ϕ*) = ∫*p*(*y*,*I*\|*x*,*θ*,*ϕ*)*d**y*<sub>mis</sub>
 
 posterior
+
 *p*(*θ*,*ϕ*\|*x*,*y*<sub>obs</sub>,*I*) ∝ *p*(*θ*,*ϕ*\|*x*)∫*p*(*y*\|*x*,*θ*)*p*(*I*\|*x*,*θ*,*ϕ*)*d**y*<sub>mis</sub>
 
 -   superpopulation inference *p*(*θ*,*ϕ*\|*x*,*y*<sub>obs</sub>,*I*)
@@ -230,6 +237,7 @@ posterior
     *p*(*y*<sub>mis<sub>*i*</sub></sub>\|*x*,*y*<sub>obs</sub>,*I*,*θ̂*<sub>*i*</sub>,*ϕ̂*<sub>*i*</sub>)
 
 Ignorability
+
 *p*(*θ*\|*x*,*y*<sub>obs</sub>,*I*) = *p*(*θ*\|*x*,*y*<sub>obs</sub>) ∝ *p*(*θ*\|*x*)∫*p*(*y*\|*x*,*θ*)*d**y*<sub>mis</sub>
  - missing at random
 *p*(*I*\|*x*,*y*,*ϕ*) = *p*(*I*\|*x*,*y*<sub>obs</sub>,*ϕ*) free of
@@ -258,6 +266,7 @@ propensity score *P*(*I*<sub>*i*</sub>\|*X*) = *π*<sub>*i*</sub>
 
 parameter estimate *θ̂*<sub>*k*</sub> and associated variance estimate
 *Ŵ*<sub>*k*</sub> from *K* imputed data sets
+
 $$\begin{aligned}
 &\mbox{combined estimate } \bar{\theta}\_K = \frac{1}{K}\sum\_{k=1}^K \hat{\theta}\_k \\
 &\mbox{total variance associated with } T_K = W_K + \frac{K+1}{K} B_K\\
@@ -269,6 +278,7 @@ $$\begin{aligned}
 # linear regression
 
 semiconjugate prior distribution
+
 $$
 \begin{aligned}
 y\|X,\beta,\sigma^2 &\sim \mbox{normal}(X\beta,\sigma^2) \propto \exp(-\mbox{SSR}(\beta)/(2\sigma^2))  \\
@@ -278,6 +288,7 @@ y\|X,\beta,\sigma^2 &\sim \mbox{normal}(X\beta,\sigma^2) \propto \exp(-\mbox{SSR
 \mathbf{V} =\mbox{Var}(\beta\|y,X,\sigma^2) &= (\Sigma_0^{-1} + X^TX/\sigma^2)^{-1}
 \end{aligned}
 $$
+
 $$\begin{aligned}
 \gamma = 1/\sigma^2 &\sim \mbox{gamma}(\nu_0/2, \nu_0\sigma_0^2/2)\\
 \gamma\|y,X,\beta &\sim \mbox{gamma}((\nu_0+n)/2, \[\nu_0\sigma_0^2+\mbox{SSR}(\beta)\]/2)\\
@@ -292,42 +303,45 @@ $$\begin{aligned}
 -   *g*-prior (Zellner, 1986)
     *Σ*<sub>0</sub> = *k*(*X*<sup>*T*</sup>*X*)<sup>−1</sup> = (*g**σ*<sup>2</sup>)(*X*<sup>*T*</sup>*X*)<sup>−1</sup>,
     *β*<sub>0</sub> = 0
-    $$
-    \begin{aligned}
-    \mathbf{m} &= (X^TX/(g\sigma^2) + X^TX/\sigma^2)^{-1} (0  + X^Ty/\sigma^2)  = \frac{g}{g+1}\sigma^2(X^TX)^{-1}X^Ty\\
-    \mathbf{V}  &= (X^TX/(g\sigma^2) + X^TX/\sigma^2)^{-1} = \frac{g}{g+1}\sigma^2(X^TX)^{-1}\\
-    \sigma^2\|y,X &\sim \mbox{inverse-gamma}((\nu_0+n)/2, \[\nu_0\sigma_0^2+\mbox{SSR}\_g\]/2)\\
-    \mbox{SSR}\_g &= y^Ty - \mathbf{m}^T\mathbf{V}^{-1}\mathbf{m} = y^T(\mathbf{I} - \frac{g}{g+1}X(X^TX)^{-1}X^T)y
-    \end{aligned}
-    $$
+
+$$
+\begin{aligned}
+\mathbf{m} &= (X^TX/(g\sigma^2) + X^TX/\sigma^2)^{-1} (0  + X^Ty/\sigma^2)  = \frac{g}{g+1}\sigma^2(X^TX)^{-1}X^Ty\\
+\mathbf{V}  &= (X^TX/(g\sigma^2) + X^TX/\sigma^2)^{-1} = \frac{g}{g+1}\sigma^2(X^TX)^{-1}\\
+\sigma^2\|y,X &\sim \mbox{inverse-gamma}((\nu_0+n)/2, \[\nu_0\sigma_0^2+\mbox{SSR}\_g\]/2)\\
+\mbox{SSR}\_g &= y^Ty - \mathbf{m}^T\mathbf{V}^{-1}\mathbf{m} = y^T(\mathbf{I} - \frac{g}{g+1}X(X^TX)^{-1}X^T)y
+\end{aligned}
+$$
 
 # Gaussian process regression
 
 -   a Gaussian process *μ* ∼ GP(*m*,*k*) with a mean function *m* and
     covariance function *k*
-    (*μ*(*x*<sub>1</sub>),…,*μ*(*x*<sub>*n*</sub>)) ∼ *N*<sub>*n*</sub>((*m*(*x*<sub>1</sub>),…,*m*(*x*<sub>*n*</sub>)),*K*(*x*<sub>1</sub>,…,*x*<sub>*n*</sub>))
 
--   a common choice of covariance function
-    *k*(*x*,*x*′) = *τ*<sup>2</sup>exp (−\|*x*−*x*′\|<sup>2</sup>/(2*l*<sup>2</sup>))
+(*μ*(*x*<sub>1</sub>),…,*μ*(*x*<sub>*n*</sub>)) ∼ *N*<sub>*n*</sub>((*m*(*x*<sub>1</sub>),…,*m*(*x*<sub>*n*</sub>)),*K*(*x*<sub>1</sub>,…,*x*<sub>*n*</sub>))
+ - a common choice of covariance function
+*k*(*x*,*x*′) = *τ*<sup>2</sup>exp (−\|*x*−*x*′\|<sup>2</sup>/(2*l*<sup>2</sup>))
 
 -   observe (*x*<sub>*i*</sub>,*y*<sub>*i*</sub>) and predict *μ*(*x̃*)
-    $$\begin{aligned}
-    \mbox{observation model } y_i &\sim N(\mu_i, \sigma^2) \\
-    \mbox{prior } \mu&\sim\mbox{GP(0,k)}\\
-    \begin{pmatrix} y \\ \tilde{\mu} \end{pmatrix} &\sim N\left( \begin{pmatrix} 0 \\ 0 \end{pmatrix}, \begin{pmatrix} K(x,x) + \sigma^2I & K(\tilde{x},x) \\K(x,\tilde{x}) & K(\tilde{x},\tilde{x}) \end{pmatrix} \right)\\
-    \mbox{posterior } \tilde{\mu}\|x,y,\tau,l,\sigma &\sim N(\mbox{E}\[\tilde{\mu}\], \mbox{Cov}(\tilde{\mu}))\\
-    \mbox{E}\[\tilde{\mu}\]&= K(\tilde{x},x) (K(x,x) + \sigma^2I)^{-1}y\\
-    \mbox{Cov}(\tilde{\mu}) &= K(\tilde{x},\tilde{x}) - K(\tilde{x},x) (K(x,x) + \sigma^2I)^{-1}K(x,\tilde{x})
-    \end{aligned}$$
+
+$$\begin{aligned}
+\mbox{observation model } y_i &\sim N(\mu_i, \sigma^2) \\
+\mbox{prior } \mu&\sim\mbox{GP(0,k)}\\
+\begin{pmatrix} y \\ \tilde{\mu} \end{pmatrix} &\sim N\left( \begin{pmatrix} 0 \\ 0 \end{pmatrix}, \begin{pmatrix} K(x,x) + \sigma^2I & K(\tilde{x},x) \\K(x,\tilde{x}) & K(\tilde{x},\tilde{x}) \end{pmatrix} \right)\\
+\mbox{posterior } \tilde{\mu}\|x,y,\tau,l,\sigma &\sim N(\mbox{E}\[\tilde{\mu}\], \mbox{Cov}(\tilde{\mu}))\\
+\mbox{E}\[\tilde{\mu}\]&= K(\tilde{x},x) (K(x,x) + \sigma^2I)^{-1}y\\
+\mbox{Cov}(\tilde{\mu}) &= K(\tilde{x},\tilde{x}) - K(\tilde{x},x) (K(x,x) + \sigma^2I)^{-1}K(x,\tilde{x})
+\end{aligned}$$
 
 -   a connection to basis expansion
     $\mu(x) = \sum\_{h=1}^H \beta_h b_h(x)$,
     *β* = (*β*<sub>1</sub>,…,*β*<sub>*H*</sub>) ∼ *N*<sub>*H*</sub>(*β*<sub>0</sub>,*Σ*<sub>*β*</sub>)
-    $$\begin{aligned}
-    (\mu(x_1),\dots,\mu(x_n)) &\sim N_n((m(x_1),\dots,m(x_n)), K(x_1,\dots,x_n))\\
-    \mbox{mean function } m(x) &= b(x)^T\beta_0\\
-    \mbox{covariance function } k(x,x') &= b(x)^T\Sigma\_{\beta}b(x')
-    \end{aligned}$$
+
+$$\begin{aligned}
+(\mu(x_1),\dots,\mu(x_n)) &\sim N_n((m(x_1),\dots,m(x_n)), K(x_1,\dots,x_n))\\
+\mbox{mean function } m(x) &= b(x)^T\beta_0\\
+\mbox{covariance function } k(x,x') &= b(x)^T\Sigma\_{\beta}b(x')
+\end{aligned}$$
 
 # Dirichlet process
 
@@ -346,27 +360,31 @@ $$\begin{aligned}
 
     -   (indirect representation) For finite
         *B*<sub>1</sub>, …, *B*<sub>*K*</sub> partitioning *Ω*,
-        (*P*(*B*<sub>1</sub>),…,*P*(*B*<sub>*K*</sub>)) ∼ Dirichlet(*α**P*<sub>0</sub>(*B*<sub>1</sub>),…,*α**P*<sub>0</sub>(*B*<sub>*K*</sub>))
-    -   (direct representation) stick-breaking construction
-        $$P(\cdot) = \sum\_{k=1}^{\infty} \pi_k \delta\_{\theta_k}(\cdot),\quad \pi_k=V_k\prod\_{l\<k}(1-V_l), \quad V_k\sim \mbox{Beta}(1,\alpha),\quad \theta_k\sim P_0$$
-        $$\begin{aligned}
-        \mbox{observation model } y_i &\overset{i.i.d.}{\sim} P \\
-        \mbox{prior } P &\sim \mbox{DP}(\alpha P_0)\\
-        \mbox{E}\[P(B)\] &= P_0(B), \mbox{ for all }B\in \mathcal{B}\\ 
-        \mbox{Var}\[P(B)\] &= \frac{P_0(B)(1-P_0(B))}{1+\alpha}, \mbox{ for all }B\in \mathcal{B}\\ 
-        \mbox{posterior } P\|y_1,\dots,y_n &\sim \mbox{DP}(\alpha P_0 + \sum\_{i=1}^n\delta\_{yi})\\
-        (P(B_1),\dots,P(B_K))\|y_1,\dots,y_n &\sim \mbox{Dirichlet}(\alpha P_0(B_1) + \sum\_{i=1}^nI(y_i\in B_1), \dots, \alpha P_0(B_K) + \sum\_{i=1}^nI(y_i\in B_K)) \\
-        \mbox{E}\[P(B)\|y_1,\dots,y_n\] &= \frac{\alpha}{\alpha + n}P_0(B) + \frac{n}{\alpha + n}\sum\_{i=1}^n\frac{1}{n}\delta\_{y_i}(B)\\
-        \alpha\to 0,\quad P\|y_1,\dots,y_n &\sim \mbox{DP}(\sum\_{i=1}^n\delta\_{y_i})\quad\mbox{Bayesian bootstrap}
-        \end{aligned}$$
+
+(*P*(*B*<sub>1</sub>),…,*P*(*B*<sub>*K*</sub>)) ∼ Dirichlet(*α**P*<sub>0</sub>(*B*<sub>1</sub>),…,*α**P*<sub>0</sub>(*B*<sub>*K*</sub>))
+ - (direct representation) stick-breaking construction
+
+$$P(\cdot) = \sum\_{k=1}^{\infty} \pi_k \delta\_{\theta_k}(\cdot),\quad \pi_k=V_k\prod\_{l\<k}(1-V_l), \quad V_k\sim \mbox{Beta}(1,\alpha),\quad \theta_k\sim P_0$$
+
+$$\begin{aligned}
+\mbox{observation model } y_i &\overset{i.i.d.}{\sim} P \\
+\mbox{prior } P &\sim \mbox{DP}(\alpha P_0)\\
+\mbox{E}\[P(B)\] &= P_0(B), \mbox{ for all }B\in \mathcal{B}\\ 
+\mbox{Var}\[P(B)\] &= \frac{P_0(B)(1-P_0(B))}{1+\alpha}, \mbox{ for all }B\in \mathcal{B}\\ 
+\mbox{posterior } P\|y_1,\dots,y_n &\sim \mbox{DP}(\alpha P_0 + \sum\_{i=1}^n\delta\_{yi})\\
+(P(B_1),\dots,P(B_K))\|y_1,\dots,y_n &\sim \mbox{Dirichlet}(\alpha P_0(B_1) + \sum\_{i=1}^nI(y_i\in B_1), \dots, \alpha P_0(B_K) + \sum\_{i=1}^nI(y_i\in B_K)) \\
+\mbox{E}\[P(B)\|y_1,\dots,y_n\] &= \frac{\alpha}{\alpha + n}P_0(B) + \frac{n}{\alpha + n}\sum\_{i=1}^n\frac{1}{n}\delta\_{y_i}(B)\\
+\alpha\to 0,\quad P\|y_1,\dots,y_n &\sim \mbox{DP}(\sum\_{i=1}^n\delta\_{y_i})\quad\mbox{Bayesian bootstrap}
+\end{aligned}$$
 
 -   DP mixture model
     $f(y) = \sum\_{k=1}^{\infty} \pi_k \mathcal{K}(y\|\theta_k^\*)$ with
     *π* ∼ DP(*α**P*<sub>0</sub>)
-    $$\begin{aligned}
-    y_i &\sim \mathcal{K}(\theta_i)\\
-    \theta_i &\sim P\\
-    P &\sim \mbox{DP}(\alpha P_0)\\
-    \mbox{Polya urn } \theta_i\|\theta\_{-i} &\sim \frac{\alpha}{\alpha+i-1} P_0(\theta_i) + \sum\_{j=1}^{i-1} \frac{1}{\alpha + i-1}\delta\_{\theta_j} \\
-    \mbox{posterior } \theta_i\|\theta^{(-i)} &\sim \frac{\alpha}{\alpha+n-1} P_0(\theta_i) + \sum\_{k=1}^{K^{(-i)}} \frac{n_k^{(-i)}}{\alpha + n-1}\delta\_{\theta_k^{\*(-i)}},\quad \theta_k^{\*(-i)} \mbox{ are unique values of }\theta^{(-i)}, \quad n_k^{(-i)}=\sum\_{j\ne i}I(\theta_j=\theta_k^\*)
-    \end{aligned}$$
+
+$$\begin{aligned}
+y_i &\sim \mathcal{K}(\theta_i)\\
+\theta_i &\sim P\\
+P &\sim \mbox{DP}(\alpha P_0)\\
+\mbox{Polya urn } \theta_i\|\theta\_{-i} &\sim \frac{\alpha}{\alpha+i-1} P_0(\theta_i) + \sum\_{j=1}^{i-1} \frac{1}{\alpha + i-1}\delta\_{\theta_j} \\
+\mbox{posterior } \theta_i\|\theta^{(-i)} &\sim \frac{\alpha}{\alpha+n-1} P_0(\theta_i) + \sum\_{k=1}^{K^{(-i)}} \frac{n_k^{(-i)}}{\alpha + n-1}\delta\_{\theta_k^{\*(-i)}},\quad \theta_k^{\*(-i)} \mbox{ are unique values of }\theta^{(-i)}, \quad n_k^{(-i)}=\sum\_{j\ne i}I(\theta_j=\theta_k^\*)
+\end{aligned}$$
