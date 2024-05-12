@@ -81,19 +81,19 @@ counterexamples
 
 $$\begin{aligned}
 y\_{ij}\|\theta_j &\sim \mathrm{normal}(\theta_j,\sigma^2) \quad i=1,2,\dots,n_j;j=1,2,\dots,J\\
-\bar{y}\_{.j}\|\theta_j &\sim \mathrm{normal}(\theta_j,\sigma_j^2) \quad  \bar{y}\_{.j} = \frac{1}{n_j}\sum\_{i=1}^{n_j}y\_{ij}, \sigma_j^2=\sigma^2/n_j, \bar{y}\_{.j} = \frac{\sum\_{j=1}^{J} \bar{y}\_{.j}/\sigma_j^2}{\sum\_{j=1}^{J} 1/\sigma_j^2}\\
-p(\theta\|\mu,\tau) &= \prod\_{j=1}^J \mathrm{dnorm}(\theta_j\|\mu,\tau^2)\\
+\bar{y}\_{.j}\|\theta_j &\sim \mathrm{normal}(\theta_j,\sigma_j^2) \quad  \bar{y}\_{.j} = \frac{1}{n_j}\sum\limits_{i=1}^{n_j}y\_{ij}, \sigma_j^2=\sigma^2/n_j, \bar{y}\_{.j} = \frac{\sum\limits_{j=1}^{J} \bar{y}\_{.j}/\sigma_j^2}{\sum\limits_{j=1}^{J} 1/\sigma_j^2}\\
+p(\theta\|\mu,\tau) &= \prod\limits_{j=1}^J \mathrm{dnorm}(\theta_j\|\mu,\tau^2)\\
 p(\mu,\tau) &\propto p(\tau)\\
 p(\theta,\mu,\tau\|y) &\propto p(\mu,\tau)p(\theta\|\mu,\tau)p(y\|\theta)\\
-&\propto p(\mu,\tau)\prod\_{j=1}^J \mathrm{dnorm}(\theta_j\|\mu,\tau^2)\prod\_{j=1}^J \mathrm{dnorm}(\bar{y}\_{.j}\|\theta_j,\sigma_j^2)\\
+&\propto p(\mu,\tau)\prod\limits_{j=1}^J \mathrm{dnorm}(\theta_j\|\mu,\tau^2)\prod\limits_{j=1}^J \mathrm{dnorm}(\bar{y}\_{.j}\|\theta_j,\sigma_j^2)\\
 \theta_j\|\mu,\tau,y &\sim \mathrm{normal}(\hat{\theta}\_j,V_j) \quad \hat{\theta}\_j = \frac{\bar{y}\_{.j}/\sigma_j^2+\mu/\tau^2}{1/\sigma_j^2+1/\tau^2}, V_j=\frac{1}{1/\sigma_j^2+1/\tau^2}\\
 \bar{y}\_{.j}\|\mu,\tau &\sim \mathrm{normal}(\mu,\sigma_j^2+\tau^2)\\
-p(\mu,\tau\|y) &\propto p(\mu,\tau)\prod\_{j=1}^J \mathrm{dnorm}(\bar{y}\_{.j}\|\mu,\sigma_j^2+\tau^2)\\
-\mu\|\tau,y &\sim \mathrm{normal}(\hat{\mu}\_j,V\_{\mu}) \quad \hat{\mu} = \frac{\sum\_{j=1}^J\bar{y}\_{.j}/(\sigma_j^2+\tau^2)}{\sum\_{j=1}^J 1/(\sigma_j^2+\tau^2)}, V\_{\mu}^{-1}=\frac{1}{\sum\_{j=1}^J 1/(\sigma_j^2+\tau^2)}\\
+p(\mu,\tau\|y) &\propto p(\mu,\tau)\prod\limits_{j=1}^J \mathrm{dnorm}(\bar{y}\_{.j}\|\mu,\sigma_j^2+\tau^2)\\
+\mu\|\tau,y &\sim \mathrm{normal}(\hat{\mu}\_j,V\_{\mu}) \quad \hat{\mu} = \frac{\sum\limits_{j=1}^J\bar{y}\_{.j}/(\sigma_j^2+\tau^2)}{\sum\limits_{j=1}^J 1/(\sigma_j^2+\tau^2)}, V\_{\mu}^{-1}=\frac{1}{\sum\limits_{j=1}^J 1/(\sigma_j^2+\tau^2)}\\
 p(\tau\|y) &= \frac{p(\mu,\tau\|y)}{p(\mu\|\tau,y)} \\
-&\propto \frac{p(\tau)\prod\_{j=1}^J \mathrm{dnorm}(\bar{y}\_{.j}\|\mu,\sigma_j^2+\tau^2)}{p(\mu\|\mu,V\_{\mu})} \\
-&\propto \frac{p(\tau)\prod\_{j=1}^J \mathrm{dnorm}(\bar{y}\_{.j}\|\hat{\mu},\sigma_j^2+\tau^2)}{p(\hat{\mu}\|\hat{\mu},V\_{\mu})} \\
-&\propto p(\tau)V\_{\mu}^{1/2}\prod\_{j=1}^J (\sigma_j^2+\tau^2)^{-1/2}\exp\left(-\frac{(\bar{y}\_{.j}-\hat{\mu})^2}{2(\sigma_j^2+\tau^2)}\right) \\
+&\propto \frac{p(\tau)\prod\limits_{j=1}^J \mathrm{dnorm}(\bar{y}\_{.j}\|\mu,\sigma_j^2+\tau^2)}{p(\mu\|\mu,V\_{\mu})} \\
+&\propto \frac{p(\tau)\prod\limits_{j=1}^J \mathrm{dnorm}(\bar{y}\_{.j}\|\hat{\mu},\sigma_j^2+\tau^2)}{p(\hat{\mu}\|\hat{\mu},V\_{\mu})} \\
+&\propto p(\tau)V\_{\mu}^{1/2}\prod\limits_{j=1}^J (\sigma_j^2+\tau^2)^{-1/2}\exp\left(-\frac{(\bar{y}\_{.j}-\hat{\mu})^2}{2(\sigma_j^2+\tau^2)}\right) \\
 \end{aligned}$$
 
 # mixture (identifiability issue)
@@ -170,11 +170,11 @@ $$\begin{aligned}
 \mbox{elpd} &= \mbox{expected log predictive density for a new data point}\\
 &= \mathrm{E}\_f(\log p\_{\mathrm{post}}(\tilde{y}\_i)) = \int (\log p\_{\mathrm{post}}(\tilde{y}\_i))f(\tilde{y}\_i)d\tilde{y}\_i\\
 \mbox{elppd} &= \mbox{expected log pointwise predictive density for a new dataset}\\
-&= \sum\_{i=1}^n \mathrm{E}\_f(\log p\_{\mathrm{post}}(\tilde{y}\_i)) \\
+&= \sum\limits_{i=1}^n \mathrm{E}\_f(\log p\_{\mathrm{post}}(\tilde{y}\_i)) \\
 \mbox{lppd} &= \mbox{log pointwise predictive density}\\
-&= \log\prod\_{i=1}^n p\_{\mathrm{post}}(y_i) = \sum\_{i=1}^n \log \int p(y_i\|\theta)p\_{\mathrm{post}}(\theta)d\theta \\
+&= \log\prod\limits_{i=1}^n p\_{\mathrm{post}}(y_i) = \sum\limits_{i=1}^n \log \int p(y_i\|\theta)p\_{\mathrm{post}}(\theta)d\theta \\
 \mbox{computed lppd} &= \mbox{computed log pointwise predictive density}\\
-&= \sum\_{i=1}^n \log \left( \frac{1}{S} \sum\_{s=1}^S  p(y_i\|\theta^s) \right)
+&= \sum\limits_{i=1}^n \log \left( \frac{1}{S} \sum\limits_{s=1}^S  p(y_i\|\theta^s) \right)
 \end{aligned}
 $$
 
@@ -190,7 +190,7 @@ Deviance information criterion (DIC)
 $$\begin{aligned}
 \widehat{\mathrm{elpd}}\_{\mathrm{DIC}} &= \log p(y\|\hat{\theta}\_{\mathrm{Bayes}}) - p\_{\mathrm{DIC}} \\
 p\_{\mathrm{DIC}} &= 2 \Bigg(\log p(y\|\hat{\theta}\_{\mathrm{Bayes}}) - \mathrm{E}\_{\mathrm{post}}(\log p(y\|\theta))\Bigg) \\
-\mbox{computed } p\_{\mathrm{DIC}} &= 2 \Bigg(\log p(y\|\hat{\theta}\_{\mathrm{Bayes}}) - \frac{1}{S} \sum\_{s=1}^S \log p(y\|\theta^s) \Bigg) \\
+\mbox{computed } p\_{\mathrm{DIC}} &= 2 \Bigg(\log p(y\|\hat{\theta}\_{\mathrm{Bayes}}) - \frac{1}{S} \sum\limits_{s=1}^S \log p(y\|\theta^s) \Bigg) \\
 p\_{\mathrm{DIC}\_\mathrm{alt}} &= 2 \mathrm{var}\_{\mathrm{post}}(\log p(y\|\theta))) \\
 \mathrm{DIC} &= -2\log p(y\|\hat{\theta}\_{\mathrm{Bayes}}) + 2p\_{\mathrm{DIC}} 
 \end{aligned}$$
@@ -198,10 +198,10 @@ p\_{\mathrm{DIC}\_\mathrm{alt}} &= 2 \mathrm{var}\_{\mathrm{post}}(\log p(y\|\th
 Watanabe-Akaike or widely applicable information criterion (WAIC)
 
 $$\begin{aligned}
-p\_{\mathrm{WAIC}\_1} &= 2 \sum\_{i=1}^n \Bigg(\log (\mathrm{E}\_{\mathrm{post}} p(y_i\|\theta)) - \mathrm{E}\_{\mathrm{post}}(\log p(y_i\|\theta)) \Bigg) \\
-\mbox{computed } p\_{\mathrm{WAIC}\_1} &= 2 \sum\_{i=1}^n  \Bigg(\log \Bigg(\frac{1}{S} \sum\_{s=1}^S \log p(y_i\|\theta^s) \Bigg) - \frac{1}{S} \sum\_{s=1}^S \log p(y_i\|\theta^s) \Bigg) \\
-p\_{\mathrm{WAIC}\_2} &= \sum\_{i=1}^n \mathrm{var}\_{\mathrm{post}}(\log p(y_i\|\theta)) \\
-\mbox{computed } p\_{\mathrm{WAIC}\_2} &= \sum\_{i=1}^n \widehat{\mathrm{var}}\_{\mathrm{post}}(\log p(y_i\|\theta^s)) \\
+p\_{\mathrm{WAIC}\_1} &= 2 \sum\limits_{i=1}^n \Bigg(\log (\mathrm{E}\_{\mathrm{post}} p(y_i\|\theta)) - \mathrm{E}\_{\mathrm{post}}(\log p(y_i\|\theta)) \Bigg) \\
+\mbox{computed } p\_{\mathrm{WAIC}\_1} &= 2 \sum\limits_{i=1}^n  \Bigg(\log \Bigg(\frac{1}{S} \sum\limits_{s=1}^S \log p(y_i\|\theta^s) \Bigg) - \frac{1}{S} \sum\limits_{s=1}^S \log p(y_i\|\theta^s) \Bigg) \\
+p\_{\mathrm{WAIC}\_2} &= \sum\limits_{i=1}^n \mathrm{var}\_{\mathrm{post}}(\log p(y_i\|\theta)) \\
+\mbox{computed } p\_{\mathrm{WAIC}\_2} &= \sum\limits_{i=1}^n \widehat{\mathrm{var}}\_{\mathrm{post}}(\log p(y_i\|\theta^s)) \\
 \widehat{\mathrm{elppd}}\_{\mathrm{WAIC}} &= \mathrm{lppd} - p\_{\mathrm{WAIC}} \\
 \mathrm{WAIC} &= -2\mathrm{lppd} + 2p\_{\mathrm{WAIC}\_2} 
 \end{aligned}$$
@@ -213,7 +213,7 @@ BIC =  − 2log *p*(*y*\|*θ̂*) + *k*log *n*
 Leave-one-out cross-validation
 
 $$\begin{aligned}
-\mbox{lppd}\_{\mbox{loo-cv}} &= \sum\_{i=1}^n \log p\_{\mbox{post}(-i)}(y_i) \quad\mbox{Bayesian LOO-CV estimate of out of sample predictive fit}\\
+\mbox{lppd}\_{\mbox{loo-cv}} &= \sum\limits_{i=1}^n \log p\_{\mbox{post}(-i)}(y_i) \quad\mbox{Bayesian LOO-CV estimate of out of sample predictive fit}\\
 b &= \mbox{lppd} - \overline{\mbox{lppd}}\_{-i} \quad\mbox{first order bias correction}\\
 \mbox{lppd}\_{\mbox{cloo-cv}} &= \mbox{lppd}\_{\mbox{loo-cv}} + b \quad\mbox{bias-corrected Bayesian LOO-CV}\\
 p\_{\mbox{loo-cv}} &= \mbox{lppd} - \mbox{lppd}\_{\mbox{loo-cv}} \quad\mbox{effective number of parameters}\\
@@ -268,10 +268,10 @@ parameter estimate *θ̂*<sub>*k*</sub> and associated variance estimate
 *Ŵ*<sub>*k*</sub> from *K* imputed data sets
 
 $$\begin{aligned}
-&\mbox{combined estimate } \bar{\theta}\_K = \frac{1}{K}\sum\_{k=1}^K \hat{\theta}\_k \\
+&\mbox{combined estimate } \bar{\theta}\_K = \frac{1}{K}\sum\limits_{k=1}^K \hat{\theta}\_k \\
 &\mbox{total variance associated with } T_K = W_K + \frac{K+1}{K} B_K\\
-&\mbox{within-imputation variance component } W_K = \frac{1}{K}\sum\_{k=1}^K \widehat{W}\_k \\
-&\mbox{between-imputation variance component } B_K = \frac{1}{K-1} \sum\_{k=1}^K (\hat{\theta}\_k - \bar{\theta}\_K)^2 \\
+&\mbox{within-imputation variance component } W_K = \frac{1}{K}\sum\limits_{k=1}^K \widehat{W}\_k \\
+&\mbox{between-imputation variance component } B_K = \frac{1}{K-1} \sum\limits_{k=1}^K (\hat{\theta}\_k - \bar{\theta}\_K)^2 \\
 &t\mbox{ distribution approximation with d.f. }=(K-1)\left( 1+ \frac{K}{K+1} \frac{W_K}{B_K} \right)^2 
 \end{aligned}$$
 
@@ -334,7 +334,7 @@ $$\begin{aligned}
 \end{aligned}$$
 
 -   a connection to basis expansion
-    $\mu(x) = \sum\_{h=1}^H \beta_h b_h(x)$,
+    $\mu(x) = \sum\limits_{h=1}^H \beta_h b_h(x)$,
     *β* = (*β*<sub>1</sub>,…,*β*<sub>*H*</sub>) ∼ *N*<sub>*H*</sub>(*β*<sub>0</sub>,*Σ*<sub>*β*</sub>)
 
 $$\begin{aligned}
@@ -351,8 +351,8 @@ $$\begin{aligned}
     *y*<sub>*i*</sub> ∈ \[*ξ*<sub>0</sub>,*ξ*<sub>*K*</sub>\]
 
 $$\begin{aligned}
-f(y) &= \sum\_{k=1}^K I(\xi\_{k-1} \< y \le \xi_k) \frac{\pi_k}{\xi_k - \xi\_{k-1}} \\
-\mbox{prior } p(\pi \| a) &= \frac{\Gamma(\sum\_{k=1}^K a_k)}{\prod\_{k=1}^K \Gamma(a_k)} \prod\_{k=1}^K \pi_k^{a_k-1}\\
+f(y) &= \sum\limits_{k=1}^K I(\xi\_{k-1} \< y \le \xi_k) \frac{\pi_k}{\xi_k - \xi\_{k-1}} \\
+\mbox{prior } p(\pi \| a) &= \frac{\Gamma(\sum\limits_{k=1}^K a_k)}{\prod\limits_{k=1}^K \Gamma(a_k)} \prod\limits_{k=1}^K \pi_k^{a_k-1}\\
 \mbox{posterior } \pi \| y &\sim \mbox{Dirichlet}(a_1+n_1,\dots,a_K+n_K),\quad n_k= \sum_i  I(\xi\_{k-1} \< y_i \le \xi_k)
 \end{aligned}$$
 
@@ -364,7 +364,7 @@ f(y) &= \sum\_{k=1}^K I(\xi\_{k-1} \< y \le \xi_k) \frac{\pi_k}{\xi_k - \xi\_{k-
 (*P*(*B*<sub>1</sub>),…,*P*(*B*<sub>*K*</sub>)) ∼ Dirichlet(*α**P*<sub>0</sub>(*B*<sub>1</sub>),…,*α**P*<sub>0</sub>(*B*<sub>*K*</sub>))
  - (direct representation) stick-breaking construction
 
-$P(\cdot) = \sum\_{k=1}^{\infty} \pi_k \delta\_{\theta_k}(\cdot)$,
+$P(\cdot) = \sum\limits_{k=1}^{\infty} \pi_k \delta\_{\theta_k}(\cdot)$,
 *π*<sub>*k*</sub> = *V*<sub>*k*</sub>∏<sub>*l* \< *k*</sub>(1−*V*<sub>*l*</sub>),
 *V*<sub>*k*</sub> ∼ Beta(1,*α*), *θ*<sub>*k*</sub> ∼ *P*<sub>0</sub>
 
@@ -373,20 +373,20 @@ $$\begin{aligned}
 \mbox{prior } P &\sim \mbox{DP}(\alpha P_0)\\
 \mbox{E}\[P(B)\] &= P_0(B), \mbox{ for all }B\in \mathcal{B}\\ 
 \mbox{Var}\[P(B)\] &= \frac{P_0(B)(1-P_0(B))}{1+\alpha}, \mbox{ for all }B\in \mathcal{B}\\ 
-\mbox{posterior } P\|y_1,\dots,y_n &\sim \mbox{DP}(\alpha P_0 + \sum\_{i=1}^n\delta\_{yi})\\
-(P(B_1),\dots,P(B_K))\|y_1,\dots,y_n &\sim \mbox{Dirichlet}(\alpha P_0(B_1) + \sum\_{i=1}^nI(y_i\in B_1), \dots, \alpha P_0(B_K) + \sum\_{i=1}^nI(y_i\in B_K)) \\
-\mbox{E}\[P(B)\|y_1,\dots,y_n\] &= \frac{\alpha}{\alpha + n}P_0(B) + \frac{n}{\alpha + n}\sum\_{i=1}^n\frac{1}{n}\delta\_{y_i}(B)\\
-\alpha\to 0,\quad P\|y_1,\dots,y_n &\sim \mbox{DP}(\sum\_{i=1}^n\delta\_{y_i})\quad\mbox{Bayesian bootstrap}
+\mbox{posterior } P\|y_1,\dots,y_n &\sim \mbox{DP}(\alpha P_0 + \sum\limits_{i=1}^n\delta\_{yi})\\
+(P(B_1),\dots,P(B_K))\|y_1,\dots,y_n &\sim \mbox{Dirichlet}(\alpha P_0(B_1) + \sum\limits_{i=1}^nI(y_i\in B_1), \dots, \alpha P_0(B_K) + \sum\limits_{i=1}^nI(y_i\in B_K)) \\
+\mbox{E}\[P(B)\|y_1,\dots,y_n\] &= \frac{\alpha}{\alpha + n}P_0(B) + \frac{n}{\alpha + n}\sum\limits_{i=1}^n\frac{1}{n}\delta\_{y_i}(B)\\
+\alpha\to 0,\quad P\|y_1,\dots,y_n &\sim \mbox{DP}(\sum\limits_{i=1}^n\delta\_{y_i})\quad\mbox{Bayesian bootstrap}
 \end{aligned}$$
 
 -   DP mixture model
-    $f(y) = \sum\_{k=1}^{\infty} \pi_k \mathcal{K}(y\|\theta_k^\*)$ with
+    $f(y) = \sum\limits_{k=1}^{\infty} \pi_k \mathcal{K}(y\|\theta_k^\*)$ with
     *π* ∼ DP(*α**P*<sub>0</sub>)
 
 $$\begin{aligned}
 y_i &\sim \mathcal{K}(\theta_i)\\
 \theta_i &\sim P\\
 P &\sim \mbox{DP}(\alpha P_0)\\
-\mbox{Polya urn } \theta_i\|\theta\_{-i} &\sim \frac{\alpha}{\alpha+i-1} P_0(\theta_i) + \sum\_{j=1}^{i-1} \frac{1}{\alpha + i-1}\delta\_{\theta_j} \\
-\mbox{posterior } \theta_i\|\theta^{(-i)} &\sim \frac{\alpha}{\alpha+n-1} P_0(\theta_i) + \sum\_{k=1}^{K^{(-i)}} \frac{n_k^{(-i)}}{\alpha + n-1}\delta\_{\theta_k^{\*(-i)}},\quad \theta_k^{\*(-i)} \mbox{ are unique values of }\theta^{(-i)}, \quad n_k^{(-i)}=\sum\_{j\ne i}I(\theta_j=\theta_k^\*)
+\mbox{Polya urn } \theta_i\|\theta\_{-i} &\sim \frac{\alpha}{\alpha+i-1} P_0(\theta_i) + \sum\limits_{j=1}^{i-1} \frac{1}{\alpha + i-1}\delta\_{\theta_j} \\
+\mbox{posterior } \theta_i\|\theta^{(-i)} &\sim \frac{\alpha}{\alpha+n-1} P_0(\theta_i) + \sum\limits_{k=1}^{K^{(-i)}} \frac{n_k^{(-i)}}{\alpha + n-1}\delta\_{\theta_k^{\*(-i)}},\quad \theta_k^{\*(-i)} \mbox{ are unique values of }\theta^{(-i)}, \quad n_k^{(-i)}=\sum\limits_{j\ne i}I(\theta_j=\theta_k^\*)
 \end{aligned}$$
