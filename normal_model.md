@@ -288,7 +288,7 @@ $$\begin{aligned}
 MCMC variance
 
 $$\begin{aligned}
-\mbox{Var}\_{\mbox{MCMC}}(\bar{\phi}) &= \mbox{Var}\_{\mbox{MC}}(\bar{\phi}) + \frac{1}{S^2}\mbox{E}\\(\phi^{(s)}-\phi_0)(\phi^{(t)}-\phi_0)\\ = \frac{\mbox{Var}({\phi})}{S\_{\mbox{eff}}}\\
+\mbox{Var}\_{\mbox{MCMC}}(\bar{\phi}) &= \mbox{Var}\_{\mbox{MC}}(\bar{\phi}) + \frac{1}{S^2} \mbox{E} \{(\phi^{(s)}-\phi_0)(\phi^{(t)}-\phi_0)\} = \frac{\mbox{Var}({\phi})}{S\_{\mbox{eff}}}\\
 \mbox{Var}\_{\mbox{MC}}(\bar{\phi}) &= \frac{\mbox{Var}({\phi})}{S}\\
 \mbox{Var}({\phi}) &= \int \phi^2p(\phi)d\phi - \phi_0^2\\
 \mbox{E}\\\phi\\ &= \int \phi p(\phi)d\phi = \phi_0\\
