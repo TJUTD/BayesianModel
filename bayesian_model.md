@@ -81,7 +81,7 @@ counterexamples
 
 $$\begin{aligned}
 y\_{ij}\|\theta_j &\sim \mathrm{normal}(\theta_j,\sigma^2) \quad i=1,2,\dots,n_j;j=1,2,\dots,J\\
-\bar{y}\_{.j}\|\theta_j &\sim \mathrm{normal}(\theta_j,\sigma_j^2) \quad  \bar{y}\_{.j} = \frac{1}{n_j}\sum\_{i=1}^{n_j}y\_{ij}, \sigma_j^2=\sigma^2/n_j, \bar{y}\_{.j} = \frac{\sum\_{j=1}^{J}\bar{y}\_{.j}/\sigma_j^2}{\sum\_{j=1}^{J}1/\sigma_j^2}\\
+\bar{y}\_{.j}\|\theta_j &\sim \mathrm{normal}(\theta_j,\sigma_j^2) \quad  \bar{y}\_{.j} = \frac{1}{n_j}\sum\_{i=1}^{n_j}y\_{ij}, \sigma_j^2=\sigma^2/n_j, \bar{y}\_{.j} = \frac{\sum\_{j=1}^{J} \bar{y}\_{.j}/\sigma_j^2}{\sum\_{j=1}^{J} 1/\sigma_j^2}\\
 p(\theta\|\mu,\tau) &= \prod\_{j=1}^J \mathrm{dnorm}(\theta_j\|\mu,\tau^2)\\
 p(\mu,\tau) &\propto p(\tau)\\
 p(\theta,\mu,\tau\|y) &\propto p(\mu,\tau)p(\theta\|\mu,\tau)p(y\|\theta)\\
@@ -89,7 +89,7 @@ p(\theta,\mu,\tau\|y) &\propto p(\mu,\tau)p(\theta\|\mu,\tau)p(y\|\theta)\\
 \theta_j\|\mu,\tau,y &\sim \mathrm{normal}(\hat{\theta}\_j,V_j) \quad \hat{\theta}\_j = \frac{\bar{y}\_{.j}/\sigma_j^2+\mu/\tau^2}{1/\sigma_j^2+1/\tau^2}, V_j=\frac{1}{1/\sigma_j^2+1/\tau^2}\\
 \bar{y}\_{.j}\|\mu,\tau &\sim \mathrm{normal}(\mu,\sigma_j^2+\tau^2)\\
 p(\mu,\tau\|y) &\propto p(\mu,\tau)\prod\_{j=1}^J \mathrm{dnorm}(\bar{y}\_{.j}\|\mu,\sigma_j^2+\tau^2)\\
-\mu\|\tau,y &\sim \mathrm{normal}(\hat{\mu}\_j,V\_{\mu}) \quad \hat{\mu} = \frac{\sum\_{j=1}^J\bar{y}\_{.j}/(\sigma_j^2+\tau^2)}{\sum\_{j=1}^J1/(\sigma_j^2+\tau^2)}, V\_{\mu}^{-1}=\frac{1}{\sum\_{j=1}^J1/(\sigma_j^2+\tau^2)}\\
+\mu\|\tau,y &\sim \mathrm{normal}(\hat{\mu}\_j,V\_{\mu}) \quad \hat{\mu} = \frac{\sum\_{j=1}^J\bar{y}\_{.j}/(\sigma_j^2+\tau^2)}{\sum\_{j=1}^J 1/(\sigma_j^2+\tau^2)}, V\_{\mu}^{-1}=\frac{1}{\sum\_{j=1}^J 1/(\sigma_j^2+\tau^2)}\\
 p(\tau\|y) &= \frac{p(\mu,\tau\|y)}{p(\mu\|\tau,y)} \\
 &\propto \frac{p(\tau)\prod\_{j=1}^J \mathrm{dnorm}(\bar{y}\_{.j}\|\mu,\sigma_j^2+\tau^2)}{p(\mu\|\mu,V\_{\mu})} \\
 &\propto \frac{p(\tau)\prod\_{j=1}^J \mathrm{dnorm}(\bar{y}\_{.j}\|\hat{\mu},\sigma_j^2+\tau^2)}{p(\hat{\mu}\|\hat{\mu},V\_{\mu})} \\
@@ -327,7 +327,7 @@ $$
 $$\begin{aligned}
 \mbox{observation model } y_i &\sim N(\mu_i, \sigma^2) \\
 \mbox{prior } \mu&\sim\mbox{GP(0,k)}\\
-\begin{pmatrix} y \\ \tilde{\mu} \end{pmatrix} &\sim N\left( \begin{pmatrix} 0 \\ 0 \end{pmatrix}, \begin{pmatrix} K(x,x) + \sigma^2I & K(\tilde{x},x) \\K(x,\tilde{x}) & K(\tilde{x},\tilde{x}) \end{pmatrix} \right)\\
+\begin{pmatrix} y \\ \tilde{\mu} \end{pmatrix} &\sim N\left( \begin{pmatrix} 0 \\ 0 \end{pmatrix}, \begin{pmatrix} K(x,x) + \sigma^2I & K(\tilde{x},x) \\ K(x,\tilde{x}) & K(\tilde{x},\tilde{x}) \end{pmatrix} \right)\\
 \mbox{posterior } \tilde{\mu}\|x,y,\tau,l,\sigma &\sim N(\mbox{E}\[\tilde{\mu}\], \mbox{Cov}(\tilde{\mu}))\\
 \mbox{E}\[\tilde{\mu}\]&= K(\tilde{x},x) (K(x,x) + \sigma^2I)^{-1}y\\
 \mbox{Cov}(\tilde{\mu}) &= K(\tilde{x},\tilde{x}) - K(\tilde{x},x) (K(x,x) + \sigma^2I)^{-1}K(x,\tilde{x})
@@ -349,15 +349,15 @@ $$\begin{aligned}
     prespecified knots *ξ* = (*ξ*<sub>0</sub>,…,*ξ*<sub>*K*</sub>),
     *ξ*<sub>0</sub> \< *ξ*<sub>1</sub> \< … \< *ξ*<sub>*K*</sub>,
     *y*<sub>*i*</sub> ∈ \[*ξ*<sub>0</sub>,*ξ*<sub>*K*</sub>\]
-    $$\begin{aligned}
-    f(y) &= \sum\_{k=1}^K I(\xi\_{k-1}\<y\le\xi_k) \frac{\pi_k}{\xi_k-\xi\_{k-1}} \\
-    \mbox{prior } p(\pi\|a) &= \frac{\Gamma(\sum\_{k=1}^Ka_k)}{\prod\_{k=1}^K\Gamma(a_k)}\prod\_{k=1}^K \pi_k^{a_k-1}\\
-    \mbox{posterior } \pi\|y &\sim \mbox{Dirichlet}(a_1+n_1,\dots,a_K+n_K),\quad n_k=\sum_iI(\xi\_{k-1}\<y_i\le \xi_k)
-    \end{aligned}$$
+
+$$\begin{aligned}
+f(y) &= \sum\_{k=1}^K I(\xi\_{k-1}\<y\le\xi_k) \frac{\pi_k}{\xi_k-\xi\_{k-1}} \\
+\mbox{prior } p(\pi\|a) &= \frac{\Gamma(\sum\_{k=1}^Ka_k)}{\prod\_{k=1}^K\Gamma(a_k)}\prod\_{k=1}^K \pi_k^{a_k-1}\\
+\mbox{posterior } \pi\|y &\sim \mbox{Dirichlet}(a_1+n_1,\dots,a_K+n_K),\quad n_k=\sum_iI(\xi\_{k-1}\<y_i\le \xi_k)
+\end{aligned}$$
 
 -   a random probability measure *P* over (*Ω*,ℬ) assigned a Dirichlet
     process DP(*α**P*<sub>0</sub>).
-
     -   (indirect representation) For finite
         *B*<sub>1</sub>, …, *B*<sub>*K*</sub> partitioning *Ω*,
 
