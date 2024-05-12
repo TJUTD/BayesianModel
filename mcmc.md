@@ -9,7 +9,7 @@ $\pi(\mathbf{x}) = \frac{1}{Z}e^{-\frac{U(\mathbf{x})}{kT}}$
 -   internal energy ⟨*U*⟩ = 𝔼<sub>*π*</sub>{*U*(**x**)}
 -   set $\beta = \frac{1}{kT}$,
     $\frac{\partial \log(Z)}{\partial \beta}= - \langle U\rangle$
--   free energy *F* =  − *k**T*log (*Z*)
+-   free energy *F* =  − *kT*log (*Z*)
 -   specific heat of the system
     $C = \frac{\partial \langle U \rangle}{\partial T}       =\frac{1}{k T^2} \mathrm{Var}\_{\pi} \\ U(\mathbf{x}) \\$
 -   the system’s entropy *S* = (⟨*U*⟩−*F*)/*T*
